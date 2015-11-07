@@ -61,45 +61,52 @@ public class Ball {
         {
             for(int j=0;j< WorldConstants.WORLD_COUNT_OF_BRICKS_IN_A_COLUMN; j++)
             {
-               if (World.GetInstance().world[i][j].exsist && World.GetInstance().world[i][j].brick.left>ball.right
-                       && World.GetInstance().world[i][j].brick.right<ball.left
-                       && World.GetInstance().world[i][j].brick.bottom<ball.top
-                       && World.GetInstance().world[i][j].brick.bottom<ball.bottom)
-               {
-                   ball.top=World.GetInstance().world[i][j].brick.bottom;
-                   ball.bottom=World.GetInstance().world[i][j].brick.bottom-50;
-                   speedY=-speedY;
-                   World.GetInstance().world[i][j].exsist=false;
-               }
-                else if (World.GetInstance().world[i][j].exsist && World.GetInstance().world[i][j].brick.left>ball.right
-                        && World.GetInstance().world[i][j].brick.right<ball.left
-                        && World.GetInstance().world[i][j].brick.top>ball.bottom
-                        && World.GetInstance().world[i][j].brick.top>ball.bottom)
+                if(World.GetInstance().world[i][j].exsist)
                 {
-                    ball.top=World.GetInstance().world[i][j].brick.bottom;
-                    ball.bottom=World.GetInstance().world[i][j].brick.bottom-50;
-                    speedY=-speedY;
-                    World.GetInstance().world[i][j].exsist=false;
-                }
-                else if (World.GetInstance().world[i][j].exsist && World.GetInstance().world[i][j].brick.top>ball.bottom
-                        && World.GetInstance().world[i][j].brick.bottom<ball.top
-                        && World.GetInstance().world[i][j].brick.left<ball.right
-                        && World.GetInstance().world[i][j].brick.left>ball.left)
-                {
-                    ball.left=World.GetInstance().world[i][j].brick.right;
-                    ball.right=World.GetInstance().world[i][j].brick.right+50;
-                    speedX=-speedX;
-                    World.GetInstance().world[i][j].exsist=false;
-                }
-                else if (World.GetInstance().world[i][j].exsist && World.GetInstance().world[i][j].brick.top>ball.bottom
-                        && World.GetInstance().world[i][j].brick.bottom<ball.top
-                        && World.GetInstance().world[i][j].brick.right>ball.left
-                        && World.GetInstance().world[i][j].brick.right>ball.right)
-                {
-                    ball.left=World.GetInstance().world[i][j].brick.left-50;
-                    ball.right=World.GetInstance().world[i][j].brick.left;
-                    speedX=-speedX;
-                    World.GetInstance().world[i][j].exsist=false;
+                    if (checkCollision(World.GetInstance().world[i][j].brick,ball))
+                    {
+                        Rect _prevPos = ball;
+                        _prevPos.bottom-=speedY;
+                        _prevPos.top-=speedY;
+                        _prevPos.right-=speedX;
+                        _prevPos.left-=speedX;
+                        Rect _brick = World.GetInstance().world[i][j].brick;
+
+                        if (_prevPos.top<_brick.bottom)
+                        {
+                            //Top
+                            ball.bottom=World.GetInstance().world[i][j].brick.bottom-50;
+                            ball.top=World.GetInstance().world[i][j].brick.bottom;
+                            speedY=-speedY;
+                        }
+                        else if (_prevPos.bottom>_brick.top)
+                        {
+                            //Bottom
+                            ball.bottom=World.GetInstance().world[i][j].brick.top;
+                            ball.top=World.GetInstance().world[i][j].brick.top+50;
+                            speedY=-speedY;
+                        }
+                        else if (_prevPos.left>_brick.right)
+                        {
+                            //Left
+                            ball.left=World.GetInstance().world[i][j].brick.right;
+                            ball.right=World.GetInstance().world[i][j].brick.right+50;
+                            speedX=-speedX;
+                        }
+                        else if (_prevPos.right<_brick.left)
+                        {
+                            //Right
+                            ball.left=World.GetInstance().world[i][j].brick.left-50;
+                            ball.right=World.GetInstance().world[i][j].brick.left;
+                            speedX=-speedX;
+                        }
+                        else
+                        {
+                            speedX=-speedX;
+                            speedY=-speedY;
+                        }
+                        World.GetInstance().world[i][j].exsist=false;
+                    }
                 }
             }
         }
@@ -118,7 +125,18 @@ public class Ball {
             speedX=((X+150)-(ball.right+25))*-10/150;
         }
     }
-    
+
+    private boolean checkCollision(Rect a, Rect b)
+    {
+        boolean collisionX = a.right >= b.left &&
+                b.right >= a.left;
+        // Collision y-axis?
+        boolean collisionY = a.top>= b.bottom &&
+                b.top >= a.bottom;
+        // Collision only if on both axes
+        return collisionX && collisionY;
+    }
+
     public void MoveBall(float X)
     {
 
