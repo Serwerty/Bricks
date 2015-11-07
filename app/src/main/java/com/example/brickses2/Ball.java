@@ -121,6 +121,7 @@ public class Ball {
         {
             ball.top=130;
             ball.bottom=80;
+            if (speedY<0)
             speedY=-speedY;
             speedX=((X+150)-(ball.right+25))*-10/150;
         }
