@@ -29,7 +29,7 @@ public class GLRenderer implements Renderer {
 	public static short indices[];
 	public FloatBuffer vertexBuffer;
 	public ShortBuffer drawListBuffer;
-	private World world;
+	private Ball ball;
 	// Our screenresolution
 	float	mScreenWidth = 1280;
 	float	mScreenHeight = 768;
@@ -42,7 +42,7 @@ public class GLRenderer implements Renderer {
 	boolean isRightSide=false;
 
 
-	private Rect player;
+	public Rect player;
 	
 	public GLRenderer(Context c)
 	{
@@ -74,7 +74,10 @@ public class GLRenderer implements Renderer {
     	long elapsed = now - mLastTime;
 		
 		// Update our example
+		World.GetInstance().DrawWorld();
 		MovePlayer();
+		ball.MoveBall(player.left);
+
 		// Render our example
 		Render(mtrxProjectionAndView);
 		
@@ -97,18 +100,18 @@ public class GLRenderer implements Renderer {
 	    // Prepare the triangle coordinate data
 	    GLES20.glVertexAttribPointer(mPositionHandle, 3,
                 GLES20.GL_FLOAT, false,
-                0, world.vertexBuffer);
+                0, World.GetInstance().vertexBuffer);
 
 
 	    // Get handle to shape's transformation matrix
         int mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
 
-        // Apply the projection and view transformation
+        // Apply the projection and view transforzmation
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
 
         // Draw the triangle
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, world.size1,
-				GLES20.GL_UNSIGNED_SHORT, world.drawListBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, World.GetInstance().size1,
+				GLES20.GL_UNSIGNED_SHORT, World.GetInstance().drawListBuffer);
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
@@ -133,7 +136,29 @@ public class GLRenderer implements Renderer {
 
 		// Disable vertex array
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
-        	
+
+		GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+		// Prepare the triangle coordinate data
+		GLES20.glVertexAttribPointer(mPositionHandle, 3,
+				GLES20.GL_FLOAT, false,
+				0, ball.vertexBuffer);
+
+
+		// Get handle to shape's transformation matrix
+		mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
+
+		// Apply the projection and view transformation
+		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
+
+		// Draw the triangle
+		GLES20.glDrawElements(GLES20.GL_TRIANGLES, ball.indices.length,
+				GLES20.GL_UNSIGNED_SHORT, ball.drawListBuffer);
+
+		// Disable vertex array
+		GLES20.glDisableVertexAttribArray(mPositionHandle);
+
+
 	}
 	
 
@@ -157,8 +182,8 @@ public class GLRenderer implements Renderer {
 	    
 	    // Setup our screen width and height for normal sprite translation.
 	    Matrix.orthoM(mtrxProjection, 0, 0f, mScreenWidth, 0.0f, mScreenHeight, 0, 50);
-	    
-	    // Set the camera position (View matrix)
+
+		// Set the camera position (View matrix)
         Matrix.setLookAtM(mtrxView, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
@@ -169,12 +194,11 @@ public class GLRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-
-		world = new World(9,4);
+		ball = new Ball();
 		// Create the triangle
 		SetupTriangle();
-		world.DrawWorld();
-
+		World.GetInstance().DrawWorld();
+		ball.MoveBall(player.left);
 
 		// Set the clear color to black
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);	

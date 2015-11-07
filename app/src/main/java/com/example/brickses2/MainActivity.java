@@ -1,6 +1,7 @@
 package com.example.brickses2;
 
 
+import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
@@ -11,7 +12,7 @@ import android.widget.RelativeLayout;
 public class MainActivity extends Activity {
 
 	// Our OpenGL Surfaceview
-	private GLSurfaceView glSurfaceView;
+	public GLSurfaceView glSurfaceView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,6 @@ public class MainActivity extends Activity {
         
         // We create our Surfaceview for our OpenGL here.
         glSurfaceView = new GLSurface(this);
-        
         // Set our view.	
 		setContentView(R.layout.activity_main);
 		
@@ -38,6 +38,8 @@ public class MainActivity extends Activity {
         RelativeLayout.LayoutParams glParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layout.addView(glSurfaceView, glParams);
 	}
+
+
 
 	@Override
 	protected void onPause() {

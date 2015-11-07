@@ -1,12 +1,13 @@
 package com.example.brickses2;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
 public class GLSurface extends GLSurfaceView {
 
-    private final GLRenderer mRenderer;
+    public final GLRenderer mRenderer;
 
     public GLSurface(Context context) {
         super(context);
@@ -21,6 +22,7 @@ public class GLSurface extends GLSurfaceView {
         // Render the view only when there is a change in the drawing data
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {

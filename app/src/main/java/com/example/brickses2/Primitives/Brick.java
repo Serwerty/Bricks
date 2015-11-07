@@ -19,6 +19,6 @@ public class Brick {
     }
 
 
-
+    public boolean exsist=true;
     public Rect brick;
 }

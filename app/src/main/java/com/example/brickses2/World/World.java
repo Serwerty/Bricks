@@ -20,17 +20,23 @@ import java.util.ListIterator;
  */
 public class World {
 
-    public World(int n, int m){
-        this.n=n;
-        this.m=m;
+    private static World Instance;
+    private World() {
+        this.n = WorldConstants.WORLD_COUNT_OF_BRICKS_IN_A_ROW;
+        this.m = WorldConstants.WORLD_COUNT_OF_BRICKS_IN_A_COLUMN;
         world = new Brick[n][m];
         for (int i=0;i<n;i++)
         {
             for (int j=0;j<m;j++)
             {
-                    world[i][j] = new Brick(i,j);
+                world[i][j] = new Brick(i,j);
             }
         }
+    }
+    public static World GetInstance() {
+        if (Instance==null)
+            Instance = new World();
+        return Instance;
     }
 
     public Brick[][] world;
@@ -50,32 +56,33 @@ public class World {
         indices = new ArrayList<Short>();
         for (int i=0;i<n;i++)
         {
-            for (int j=0;j<m;j++)
-            {
-                vertices.add(world[i][j].brick.left * 1f);
-                vertices.add(world[i][j].brick.top * 1f);
-                vertices.add(0f);
+            for (int j=0;j<m;j++) {
+                if (world[i][j].exsist) {
+                    vertices.add(world[i][j].brick.left * 1f);
+                    vertices.add(world[i][j].brick.top * 1f);
+                    vertices.add(0f);
 
-                vertices.add(world[i][j].brick.left * 1f);
-                vertices.add(world[i][j].brick.bottom * 1f);
-                vertices.add(0f);
+                    vertices.add(world[i][j].brick.left * 1f);
+                    vertices.add(world[i][j].brick.bottom * 1f);
+                    vertices.add(0f);
 
-                vertices.add(world[i][j].brick.right * 1f);
-                vertices.add(world[i][j].brick.bottom * 1f);
-                vertices.add(0f);
+                    vertices.add(world[i][j].brick.right * 1f);
+                    vertices.add(world[i][j].brick.bottom * 1f);
+                    vertices.add(0f);
 
-                vertices.add(world[i][j].brick.right * 1f);
-                vertices.add(world[i][j].brick.top * 1f);
-                vertices.add(0f);
+                    vertices.add(world[i][j].brick.right * 1f);
+                    vertices.add(world[i][j].brick.top * 1f);
+                    vertices.add(0f);
 
-                indices.add(_counter);
-                indices.add((short)(_counter + 1));
-                indices.add((short)(_counter + 2));
-                indices.add(_counter);
-                indices.add((short)(_counter + 2));
-                indices.add((short)(_counter + 3));
+                    indices.add(_counter);
+                    indices.add((short) (_counter + 1));
+                    indices.add((short) (_counter + 2));
+                    indices.add(_counter);
+                    indices.add((short) (_counter + 2));
+                    indices.add((short) (_counter + 3));
 
-                _counter+=4;
+                    _counter += 4;
+                }
             }
         }
 
