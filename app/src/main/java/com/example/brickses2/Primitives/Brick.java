@@ -1,4 +1,4 @@
-package com.example.brickses2;
+package com.example.brickses2.Primitives;
 
 import android.graphics.Rect;
 

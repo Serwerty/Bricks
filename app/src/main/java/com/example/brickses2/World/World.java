@@ -1,4 +1,6 @@
-package com.example.brickses2;
+package com.example.brickses2.World;
+
+import com.example.brickses2.Primitives.Brick;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
