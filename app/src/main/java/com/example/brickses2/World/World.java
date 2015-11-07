@@ -1,12 +1,19 @@
 package com.example.brickses2.World;
 
+import android.os.Build;
+import android.support.annotation.NonNull;
+
 import com.example.brickses2.Primitives.Brick;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Олег on 06.11.2015.
@@ -31,20 +38,20 @@ public class World {
     public List<Short> indices;
     public FloatBuffer vertexBuffer;
     public ShortBuffer drawListBuffer;
+    public int size1;
+
     private int n;
     private int m;
-    private int magic=12;
 
     public void DrawWorld()
     {
-        short _counter=-1;
-
-
+        short _counter=0;
+        vertices = new ArrayList<Float>();
+        indices = new ArrayList<Short>();
         for (int i=0;i<n;i++)
         {
             for (int j=0;j<m;j++)
             {
-                _counter++;
                 vertices.add(world[i][j].brick.left * 1f);
                 vertices.add(world[i][j].brick.top * 1f);
                 vertices.add(0f);
@@ -67,6 +74,8 @@ public class World {
                 indices.add(_counter);
                 indices.add((short)(_counter + 2));
                 indices.add((short)(_counter + 3));
+
+                _counter+=4;
             }
         }
 
@@ -77,10 +86,11 @@ public class World {
         for (Float f : vertices) {
             floatArray[i++] = (f != null ? f : Float.NaN);
         }
-
+        i=0;
         for (short f : indices) {
             intArray[i++] = f;
     }
+        size1=intArray.length;
 
         // The vertex buffer.
         ByteBuffer bb = ByteBuffer.allocateDirect(floatArray.length * 4);

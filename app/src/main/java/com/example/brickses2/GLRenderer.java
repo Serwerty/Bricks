@@ -15,6 +15,8 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 
+import com.example.brickses2.World.World;
+
 public class GLRenderer implements Renderer {
 
 	// Our matrices
@@ -27,7 +29,7 @@ public class GLRenderer implements Renderer {
 	public static short indices[];
 	public FloatBuffer vertexBuffer;
 	public ShortBuffer drawListBuffer;
-	
+	private World world;
 	// Our screenresolution
 	float	mScreenWidth = 1280;
 	float	mScreenHeight = 768;
@@ -36,6 +38,9 @@ public class GLRenderer implements Renderer {
 	Context mContext;
 	long mLastTime;
 	int mProgram;
+	boolean isLeftSide=false;
+	boolean isRightSide=false;
+
 
 	private Rect player;
 	
@@ -69,7 +74,7 @@ public class GLRenderer implements Renderer {
     	long elapsed = now - mLastTime;
 		
 		// Update our example
-		
+		MovePlayer();
 		// Render our example
 		Render(mtrxProjectionAndView);
 		
@@ -92,8 +97,9 @@ public class GLRenderer implements Renderer {
 	    // Prepare the triangle coordinate data
 	    GLES20.glVertexAttribPointer(mPositionHandle, 3,
                 GLES20.GL_FLOAT, false,
-                0, vertexBuffer);
-	    
+                0, world.vertexBuffer);
+
+
 	    // Get handle to shape's transformation matrix
         int mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
 
@@ -101,11 +107,32 @@ public class GLRenderer implements Renderer {
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
 
         // Draw the triangle
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, indices.length,
-				GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+        GLES20.glDrawElements(GLES20.GL_TRIANGLES, world.size1,
+				GLES20.GL_UNSIGNED_SHORT, world.drawListBuffer);
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
+
+		GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+		// Prepare the triangle coordinate data
+		GLES20.glVertexAttribPointer(mPositionHandle, 3,
+				GLES20.GL_FLOAT, false,
+				0, vertexBuffer);
+
+
+		// Get handle to shape's transformation matrix
+		mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
+
+		// Apply the projection and view transformation
+		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
+
+		// Draw the triangle
+		GLES20.glDrawElements(GLES20.GL_TRIANGLES, indices.length,
+				GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
+
+		// Disable vertex array
+		GLES20.glDisableVertexAttribArray(mPositionHandle);
         	
 	}
 	
@@ -141,10 +168,14 @@ public class GLRenderer implements Renderer {
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		
+
+
+		world = new World(9,4);
 		// Create the triangle
 		SetupTriangle();
-		
+		world.DrawWorld();
+
+
 		// Set the clear color to black
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);	
 
@@ -165,9 +196,9 @@ public class GLRenderer implements Renderer {
 	{
 		player = new Rect();
 		player.left = 0;
-		player.right = 400;
+		player.right = 300;
 		player.bottom = 0;
-		player.top = 100;
+		player.top = 80;
 
 		vertices = new float[]
 				{player.left, player.top, 0.0f,
@@ -204,20 +235,41 @@ public class GLRenderer implements Renderer {
 
 	public void processTouchEvent(MotionEvent event)
 	{
-		// Get the half of screen value
 		int screenhalf = (int) (mScreenWidth / 2);
-		if(event.getX()<screenhalf && player.left>=10)
+		// Get the half of screen value
+		if (event.getAction() == MotionEvent.ACTION_DOWN)
 		{
-			player.left -= 10;
-			player.right -= 10;
+			if(event.getX()<screenhalf) {
+				isLeftSide = true;
+				isRightSide = false;
+			}
+			else if (event.getX()>=screenhalf) {
+				isLeftSide = false;
+				isRightSide = true;
+			}
 		}
-		else if (player.right<=mScreenWidth-10)
+		else if (event.getAction() == MotionEvent.ACTION_UP)
 		{
-			player.left += 10;
-			player.right += 10;
+			isRightSide=false;
+			isLeftSide=false;
 		}
 
 		// Update the new data.
+
+	}
+
+	private void MovePlayer()
+	{
+		if(isLeftSide && player.left>10)
+		{
+			player.left -= 5;
+			player.right -= 5;
+		}
+		else if (isRightSide  && player.right<=mScreenWidth-10)
+		{
+			player.left += 5;
+			player.right += 5;
+		}
 		TranslateSprite();
 	}
 
