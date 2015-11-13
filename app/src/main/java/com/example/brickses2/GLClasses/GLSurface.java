@@ -1,9 +1,10 @@
-package com.example.brickses2;
+package com.example.brickses2.GLClasses;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
+
+import com.example.brickses2.GLClasses.GLRenderer;
 
 public class GLSurface extends GLSurfaceView {
 

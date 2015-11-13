@@ -1,9 +1,8 @@
-package com.example.brickses2;
+package com.example.brickses2.GameObjects;
 
 import android.graphics.Rect;
 
-import com.example.brickses2.World.World;
-import com.example.brickses2.World.WorldConstants;
+import com.example.brickses2.Constants.WorldConstants;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -57,9 +56,9 @@ public class Ball {
             speedY=-speedY;
         }
 
-        for(int i=0;i< WorldConstants.WORLD_COUNT_OF_BRICKS_IN_A_ROW; i++)
+        for(int i=0;i< WorldConstants.COUNT_OF_BRICKS_IN_A_ROW; i++)
         {
-            for(int j=0;j< WorldConstants.WORLD_COUNT_OF_BRICKS_IN_A_COLUMN; j++)
+            for(int j=0;j< WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN; j++)
             {
                 if(World.GetInstance().world[i][j].exsist)
                 {

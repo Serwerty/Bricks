@@ -1,9 +1,10 @@
-package com.example.brickses2;
+package com.example.brickses2.GLClasses;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -15,7 +16,8 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 
-import com.example.brickses2.World.World;
+import com.example.brickses2.GameObjects.Ball;
+import com.example.brickses2.GameObjects.World;
 
 public class GLRenderer implements Renderer {
 
@@ -92,7 +94,7 @@ public class GLRenderer implements Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         
         // get handle to vertex shader's vPosition member
-	    int mPositionHandle = GLES20.glGetAttribLocation(riGraphicTools.sp_SolidColor, "vPosition");
+	    int mPositionHandle = GLES20.glGetAttribLocation(ShaderTools.sp_SolidColor, "vPosition");
 	    
 	    // Enable generic vertex attribute array
 	    GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -104,7 +106,7 @@ public class GLRenderer implements Renderer {
 
 
 	    // Get handle to shape's transformation matrix
-        int mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
+        int mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
 
         // Apply the projection and view transforzmation
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
@@ -125,7 +127,7 @@ public class GLRenderer implements Renderer {
 
 
 		// Get handle to shape's transformation matrix
-		mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
+		mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
 
 		// Apply the projection and view transformation
 		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
@@ -146,7 +148,7 @@ public class GLRenderer implements Renderer {
 
 
 		// Get handle to shape's transformation matrix
-		mtrxhandle = GLES20.glGetUniformLocation(riGraphicTools.sp_SolidColor, "uMVPMatrix");
+		mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
 
 		// Apply the projection and view transformation
 		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
@@ -157,8 +159,17 @@ public class GLRenderer implements Renderer {
 
 		// Disable vertex array
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
+	}
 
+	public void RenderGraphicsBuffer(int mPositionHandle, ByteBuffer verteces,
+									 ByteBuffer indeces, int indecesCount){
+		// Prepare the triangle coordinate data
+		GLES20.glVertexAttribPointer(mPositionHandle, 3,
+				GLES20.GL_FLOAT, false,
+				0, verteces);
 
+		GLES20.glDrawElements(GLES20.GL_TRIANGLES, indecesCount,
+				GLES20.GL_UNSIGNED_SHORT, indeces);
 	}
 	
 
@@ -204,57 +215,16 @@ public class GLRenderer implements Renderer {
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);	
 
 	    // Create the shaders
-	    int vertexShader = riGraphicTools.loadShader(GLES20.GL_VERTEX_SHADER, riGraphicTools.vs_SolidColor);
-	    int fragmentShader = riGraphicTools.loadShader(GLES20.GL_FRAGMENT_SHADER, riGraphicTools.fs_SolidColor);
+	    int vertexShader = ShaderTools.loadShader(GLES20.GL_VERTEX_SHADER, ShaderTools.vs_SolidColor);
+	    int fragmentShader = ShaderTools.loadShader(GLES20.GL_FRAGMENT_SHADER, ShaderTools.fs_SolidColor);
 
-	    riGraphicTools.sp_SolidColor = GLES20.glCreateProgram();             // create empty OpenGL ES Program
-	    GLES20.glAttachShader(riGraphicTools.sp_SolidColor, vertexShader);   // add the vertex shader to program
-	    GLES20.glAttachShader(riGraphicTools.sp_SolidColor, fragmentShader); // add the fragment shader to program
-	    GLES20.glLinkProgram(riGraphicTools.sp_SolidColor);                  // creates OpenGL ES program executables
+	    ShaderTools.sp_SolidColor = GLES20.glCreateProgram();             // create empty OpenGL ES Program
+	    GLES20.glAttachShader(ShaderTools.sp_SolidColor, vertexShader);   // add the vertex shader to program
+	    GLES20.glAttachShader(ShaderTools.sp_SolidColor, fragmentShader); // add the fragment shader to program
+	    GLES20.glLinkProgram(ShaderTools.sp_SolidColor);                  // creates OpenGL ES program executables
 	    
 	    // Set our shader programm
-		GLES20.glUseProgram(riGraphicTools.sp_SolidColor);
-	}
-	
-	public void SetupTriangle()
-	{
-		player = new Rect();
-		player.left = 0;
-		player.right = 300;
-		player.bottom = 0;
-		player.top = 80;
-
-		vertices = new float[]
-				{player.left, player.top, 0.0f,
-						player.left, player.bottom, 0.0f,
-						player.right, player.bottom, 0.0f,
-						player.right, player.top, 0.0f,
-				};
-
-		// We have to create the vertices of our triangle.
-		/*vertices = new float[]
-		           {10.0f, 200f, 0.0f,
-					10.0f, 100f, 0.0f,
-					500f, 100f, 0.0f,
-					500f, 200f, 0.0f
-		           };
-		*/
-		indices = new short[] {0, 1, 2, 0, 2, 3 }; // The order of vertexrendering.
-
-		// The vertex buffer.
-		ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-		bb.order(ByteOrder.nativeOrder());
-		vertexBuffer = bb.asFloatBuffer();
-		vertexBuffer.put(vertices);
-		vertexBuffer.position(0);
-		
-		// initialize byte buffer for the draw list
-		ByteBuffer dlb = ByteBuffer.allocateDirect(indices.length * 2);
-		dlb.order(ByteOrder.nativeOrder());
-		drawListBuffer = dlb.asShortBuffer();
-		drawListBuffer.put(indices);
-		drawListBuffer.position(0);
-
+		GLES20.glUseProgram(ShaderTools.sp_SolidColor);
 	}
 
 	public void processTouchEvent(MotionEvent event)

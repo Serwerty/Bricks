@@ -1,13 +1,14 @@
 package com.example.brickses2;
 
 
-import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import com.example.brickses2.GLClasses.GLSurface;
 
 public class MainActivity extends Activity {
 
@@ -38,8 +39,6 @@ public class MainActivity extends Activity {
         RelativeLayout.LayoutParams glParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         layout.addView(glSurfaceView, glParams);
 	}
-
-
 
 	@Override
 	protected void onPause() {

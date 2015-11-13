@@ -1,9 +1,9 @@
-package com.example.brickses2;
+package com.example.brickses2.GLClasses;
 
 
 import android.opengl.GLES20;
 
-public class riGraphicTools {
+public class ShaderTools {
 
 	// Program variables
 	public static int sp_SolidColor;
