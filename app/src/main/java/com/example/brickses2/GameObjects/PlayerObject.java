@@ -4,6 +4,7 @@ import android.graphics.Rect;
 
 import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.Interfaces.IGraphicEntity;
+import com.example.brickses2.Interfaces.IMovable;
 import com.example.brickses2.Managers.BufferManager;
 
 import java.nio.ByteBuffer;
@@ -12,26 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PlayerObject implements IGraphicEntity {
+public class PlayerObject implements IGraphicEntity, IMovable {
 
     private Rect rectangle;
 
-    public  BrickObject(short i, short j){
+    public  PlayerObject(){
 
-        int left = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
-        int top = 1280 - j * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING); //TODO
-        int right = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE;
-        int bottom = 1280 - (j * (WorldConstants.BRICK_SIZE +  WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE);
+        int left = 720 / 2 - WorldConstants.PLAYER_WIDTH / 2;
+        int top = WorldConstants.PLAYER_HEIGHT;
+        int right = (720 + WorldConstants.PLAYER_WIDTH) / 2;
+        int bottom = 0;
 
         rectangle = new Rect(left, top, right, bottom);
     }
-OI
+
     @Override
     public void DrawGL() {
-
         List<Float> vertices = new ArrayList<>();
-        List<Short> indices = new ArrayList<>();
-
         vertices.add((float)rectangle.left);
         vertices.add((float)rectangle.top);
         vertices.add(0f);
@@ -48,13 +46,11 @@ OI
         vertices.add((float)rectangle.top);
         vertices.add(0f);
 
-        indices.add(indexCount);
-        indices.add((short) (indexCount + 1));
-        indices.add((short) (indexCount + 2));
-        indices.add(indexCount);
-        indices.add((short) (indexCount + 2));
-        indices.add((short) (indexCount + 3));
+        BufferManager.GetInstance().PlayerBufferCollection.Add(vertices);
+    }
 
-        BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
+    @Override
+    public void Move() {
+
     }
 }

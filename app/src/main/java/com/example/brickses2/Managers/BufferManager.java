@@ -6,9 +6,6 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.List;
 
-/**
- * Created by User1510 on 14.11.2015.
- */
 public class BufferManager {
 
     //Singletone instance

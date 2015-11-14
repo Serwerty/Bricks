@@ -4,16 +4,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BufferCollection{
 
     public FloatBuffer vertexBuffer;
     public ShortBuffer drawListBuffer;
-    public int indecesCount;
+    public int indicesCount;
 
-    private List<Float> verticesList;
-    private List<Short> indicesList;
+    private List<Float> verticesList = new ArrayList<>();
+    private List<Short> indicesList = new ArrayList<>();
     private short indexCount = 0;
 
     public void Add(List<Float> vertices){
@@ -55,6 +56,6 @@ public class BufferCollection{
         drawListBuffer.put(indicesArray);
         drawListBuffer.position(0);
 
-        indecesCount = indicesList.size();
+        indicesCount = indicesList.size();
     }
 }

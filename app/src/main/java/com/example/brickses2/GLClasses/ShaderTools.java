@@ -26,9 +26,7 @@ public class ShaderTools {
 	    "void main() {" +
 	    "  gl_FragColor = vec4(1,1,1,1);" +
 	    "}"; 
-	
-	
-	
+
 	public static int loadShader(int type, String shaderCode){
 
 	    // create a vertex shader type (GLES20.GL_VERTEX_SHADER)

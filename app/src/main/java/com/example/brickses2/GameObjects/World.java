@@ -26,7 +26,7 @@ public class World {
     private int bricksRowsCount;
     private int bricksColumnCount;
 
-    private List<IGraphicEntity> graphicEntities;
+    public List<IGraphicEntity> graphicEntities;
 
     private World() {
 
@@ -37,6 +37,7 @@ public class World {
 
         InitializeBricks();
         InitializePlayer();
+        InitializeBall();
     }
 
     private void InitializeBricks(){
@@ -53,11 +54,14 @@ public class World {
         graphicEntities.add(player);
     }
 
-    public void DrawWorld()
-    {
-        for (IGraphicEntity entity :  graphicEntities) {
+    private void InitializeBall(){
+        BallObject ball = new BallObject();
+        graphicEntities.add(ball);
+    }
+
+    public void DrawWorld(){
+        for (IGraphicEntity entity :  graphicEntities){
             entity.DrawGL();
         }
-
     }
 }

@@ -8,6 +8,9 @@ public final class WorldConstants {
     public final static short COUNT_OF_BRICKS_IN_A_COLUMN = 4;
     public final static short BRICK_PADDING = 30;
     public final static short BRICK_SIZE = 50;
+    public final static short PLAYER_WIDTH = 300;
+    public final static short PLAYER_HEIGHT = 80;
+    public final static short BALL_SIZE = 50;
 }
 
 

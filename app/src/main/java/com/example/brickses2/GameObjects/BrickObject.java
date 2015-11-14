@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BrickObject implements IGraphicEntity {
 
-    private Rect rectangle;
+    public Rect rectangle;
 
     public short brokeLimit = 1; //FUTURE
 
@@ -48,5 +48,13 @@ public class BrickObject implements IGraphicEntity {
 
             BufferManager.GetInstance().BricksBufferCollection.Add(vertices);
         }
+    }
+
+    public boolean Exists(){
+        return brokeLimit > 0;
+    }
+
+    public void Break(){
+        brokeLimit--;
     }
 }
