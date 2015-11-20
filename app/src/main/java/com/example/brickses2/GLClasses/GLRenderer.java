@@ -15,6 +15,8 @@ import android.opengl.Matrix;
 import android.view.MotionEvent;
 
 import com.example.brickses2.GameObjects.World;
+import com.example.brickses2.Managers.BufferCollection;
+import com.example.brickses2.Managers.BufferManager;
 
 public class GLRenderer implements Renderer {
 
@@ -29,21 +31,11 @@ public class GLRenderer implements Renderer {
 	public FloatBuffer vertexBuffer;
 	public ShortBuffer drawListBuffer;
 
-
-
 	public static int screenWidth = 1280;
 	public static int screenHeight = 720;
 
-	// Misc
-	Context mContext;
-	long mLastTime;
-	boolean isLeftSide=false;
-	boolean isRightSide=false;
-
-
 	public GLRenderer(Context c) {
-		mContext = c;
-		mLastTime = System.currentTimeMillis() + 100;
+
 	}
 	
 	public void onPause() {
@@ -52,30 +44,16 @@ public class GLRenderer implements Renderer {
 	
 	public void onResume()	{
 		/* Do stuff to resume the renderer */
-		mLastTime = System.currentTimeMillis();
 	}
 	
 	@Override
 	public void onDrawFrame(GL10 unused) {
-		
-		// Get the current time
-    	long now = System.currentTimeMillis();
-    	
-    	// We should make sure we are valid and sane
-    	// if (mLastTime > now) return;
-        
-    	// Get the amount of time the last frame took.
-    	// long elapsed = now - mLastTime;
-		
+
 		// Update our example
 		World.GetInstance().DrawWorld();
 
 		// Render our example
 		Render(mtrxProjectionAndView);
-		
-		// Save the current time to see how long it took :).
-        mLastTime = now;
-		
 	}
 	
 	private void Render(float[] m) {
@@ -86,66 +64,20 @@ public class GLRenderer implements Renderer {
         // get handle to vertex shader's vPosition member
 	    int mPositionHandle = GLES20.glGetAttribLocation(ShaderTools.sp_SolidColor, "vPosition");
 	    
-	    // Enable generic vertex attribute array
-	    GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-	    // Prepare the triangle coordinate data
-	    GLES20.glVertexAttribPointer(mPositionHandle, 3,
-                GLES20.GL_FLOAT, false,
-                0, World.GetInstance().vertexBuffer);
-
-
 	    // Get handle to shape's transformation matrix
         int mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
 
         // Apply the projection and view transforzmation
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
 
-        // Draw the triangle
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, World.GetInstance().size1,
-				GLES20.GL_UNSIGNED_SHORT, World.GetInstance().drawListBuffer);
-
-        // Disable vertex array
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
-
+		// Enable generic vertex attribute array
 		GLES20.glEnableVertexAttribArray(mPositionHandle);
 
-		// Prepare the triangle coordinate data
-		GLES20.glVertexAttribPointer(mPositionHandle, 3,
-				GLES20.GL_FLOAT, false,
-				0, vertexBuffer);
-
-
-		// Get handle to shape's transformation matrix
-		mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
-
-		// Apply the projection and view transformation
-		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
-
-		// Draw the triangle
-		GLES20.glDrawElements(GLES20.GL_TRIANGLES, indices.length,
-				GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
-
-		// Disable vertex array
-		GLES20.glDisableVertexAttribArray(mPositionHandle);
-
-		GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-		// Prepare the triangle coordinate data
-		GLES20.glVertexAttribPointer(mPositionHandle, 3,
-				GLES20.GL_FLOAT, false,
-				0, ball.vertexBuffer);
-
-
-		// Get handle to shape's transformation matrix
-		mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_SolidColor, "uMVPMatrix");
-
-		// Apply the projection and view transformation
-		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
-
-		// Draw the triangle
-		GLES20.glDrawElements(GLES20.GL_TRIANGLES, ball.indices.length,
-				GLES20.GL_UNSIGNED_SHORT, ball.drawListBuffer);
+        BufferManager currentBM = BufferManager.GetInstance();
+        RenderGraphicsBuffer(mPositionHandle,
+                currentBM.BallBufferCollection.vertexBuffer,
+                currentBM.BallBufferCollection.drawListBuffer,
+                currentBM.BallBufferCollection.indicesCount);
 
 		// Disable vertex array
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
@@ -159,9 +91,8 @@ public class GLRenderer implements Renderer {
 				0, verteces);
 
 		GLES20.glDrawElements(GLES20.GL_TRIANGLES, indecesCount,
-				GLES20.GL_UNSIGNED_SHORT, indeces);
+                GLES20.GL_UNSIGNED_SHORT, indeces);
 	}
-	
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
@@ -193,11 +124,6 @@ public class GLRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-		// Create the triangle
-		SetupTriangle();
-		World.GetInstance().DrawWorld();
-		ball.MoveBall(player.left);
-
 		// Set the clear color to black
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);	
 
@@ -212,31 +138,33 @@ public class GLRenderer implements Renderer {
 	    
 	    // Set our shader programm
 		GLES20.glUseProgram(ShaderTools.sp_SolidColor);
+
+        World.GetInstance().DrawWorld();
 	}
 
 	public void processTouchEvent(MotionEvent event) {
-		int screenhalf = screenWidth / 2;
-		// Get the half of screen value
-		if (event.getAction() == MotionEvent.ACTION_DOWN)
-		{
-			if(event.getX()<screenhalf) {
-				isLeftSide = true;
-				isRightSide = false;
-			}
-			else if (event.getX()>=screenhalf) {
-				isLeftSide = false;
-				isRightSide = true;
-			}
-		}
-		else if (event.getAction() == MotionEvent.ACTION_UP)
-		{
-			isRightSide=false;
-			isLeftSide=false;
-		}
+        int screenhalf = screenWidth / 2;
+        // Get the half of screen value
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+        {
+            if(event.getX()<screenhalf) {
+                isLeftSide = true;
+                isRightSide = false;
+            }
+            else if (event.getX()>=screenhalf) {
+                isLeftSide = false;
+                isRightSide = true;
+            }
+        }
+        else if (event.getAction() == MotionEvent.ACTION_UP)
+        {
+            isRightSide=false;
+            isLeftSide=false;
+        }
 
-		// Update the new data.
+        // Update the new data.
 
-	}
+    }
 
 	private void MovePlayer()
 	{
@@ -251,21 +179,5 @@ public class GLRenderer implements Renderer {
 			player.right += 5;
 		}
 		TranslateSprite();
-	}
-
-	public void TranslateSprite()
-	{
-		vertices = new float[]
-				{player.left, player.top, 0.0f,
-						player.left, player.bottom, 0.0f,
-						player.right, player.bottom, 0.0f,
-						player.right, player.top, 0.0f,
-				};
-		// The vertex buffer.
-		ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-		bb.order(ByteOrder.nativeOrder());
-		vertexBuffer = bb.asFloatBuffer();
-		vertexBuffer.put(vertices);
-		vertexBuffer.position(0);
 	}
 }
