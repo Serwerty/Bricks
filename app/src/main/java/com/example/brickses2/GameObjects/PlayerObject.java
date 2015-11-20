@@ -17,13 +17,14 @@ import java.util.List;
 public class PlayerObject implements IGraphicEntity, IMovable {
 
     public Rect rectangle;
+    private int LeftPosition;
 
-    public  PlayerObject(){
+    public  PlayerObject() {
 
         int left = GLRenderer.screenHeight / 2 - WorldConstants.PLAYER_WIDTH / 2;
-        int top = WorldConstants.PLAYER_HEIGHT;
+        int top = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING;
         int right = (GLRenderer.screenHeight + WorldConstants.PLAYER_WIDTH) / 2;
-        int bottom = 0;
+        int bottom =  WorldConstants.PLAYER_BOTTOM_PADDING;
 
         rectangle = new Rect(left, top, right, bottom);
     }
@@ -50,8 +51,13 @@ public class PlayerObject implements IGraphicEntity, IMovable {
         BufferManager.GetInstance().PlayerBufferCollection.Add(vertices);
     }
 
+    public void SetPosition(float X) {
+        LeftPosition = (int)X - WorldConstants.PLAYER_WIDTH / 2;
+    }
+
     @Override
     public void Move() {
-
+        rectangle.left = LeftPosition;
+        rectangle.right = LeftPosition + WorldConstants.PLAYER_WIDTH;
     }
 }

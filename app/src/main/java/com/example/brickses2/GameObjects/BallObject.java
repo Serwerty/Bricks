@@ -14,8 +14,8 @@ import java.util.List;
 public class BallObject implements IGraphicEntity, IMovable {
 
     private Rect rectangle;
-    private int velocityX;
-    private int velocityY;
+    private int velocityX = 5;
+    private int velocityY = 10;
 
     public  BallObject(){
         rectangle = new Rect();
@@ -65,32 +65,34 @@ public class BallObject implements IGraphicEntity, IMovable {
             velocityX =- velocityX;
         }
 
-        if (rectangle.right >= GLRenderer.screenHeight) {
-            rectangle.left = GLRenderer.screenHeight - WorldConstants.BALL_SIZE;
-            rectangle.right = GLRenderer.screenHeight;
+        if (rectangle.right >= GLRenderer.screenWidth) {
+            rectangle.left = GLRenderer.screenWidth - WorldConstants.BALL_SIZE;
+            rectangle.right = GLRenderer.screenWidth;
             velocityX =- velocityX;
         }
 
-        if (rectangle.top > GLRenderer.screenWidth) {
-            rectangle.top = GLRenderer.screenWidth;
-            rectangle.bottom = GLRenderer.screenWidth - WorldConstants.BALL_SIZE;
+        if (rectangle.top > GLRenderer.screenHeight) {
+            rectangle.top = GLRenderer.screenHeight;
+            rectangle.bottom = GLRenderer.screenHeight - WorldConstants.BALL_SIZE;
             velocityY =- velocityY;
         }
 
         if (rectangle.bottom < 0) {
-            rectangle.top = 50;
+            rectangle.top = WorldConstants.BALL_SIZE;
             rectangle.bottom = 0;
             velocityY =- velocityY;
         }
 
         PlayerObject player = (PlayerObject)World.GetInstance().graphicEntities.get(0); //Player always at first position
-        if (rectangle.bottom < 80 && rectangle.right > player.rectangle.
-                && rectangle.left < player.rectangle. + WorldConstants.PLAYER_WIDTH) {
-            rectangle.top = 130;
-            rectangle.bottom = 80;
+        if (rectangle.bottom < WorldConstants.PLAYER_HEIGHT && rectangle.right > player.rectangle.left
+                && rectangle.left < player.rectangle.left + WorldConstants.PLAYER_WIDTH) {
+            rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.BALL_SIZE;
+            rectangle.bottom = WorldConstants.PLAYER_HEIGHT;
             if (velocityY < 0) velocityY = -velocityY;
 
-            velocityX = ((player.rectangle. + 150) - (rectangle.right + 25)) * -10 / 150;
+            velocityX = ((player.rectangle.left + WorldConstants.PLAYER_WIDTH / 2) -
+                    (rectangle.right + WorldConstants.BALL_SIZE  / 2)) *
+                    -WorldConstants.MAX_BALL_SPEED / (WorldConstants.PLAYER_WIDTH / 2);
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
@@ -127,7 +129,7 @@ public class BallObject implements IGraphicEntity, IMovable {
                             if(velocityX > 0) velocityX =- velocityX;
                         }
 
-                        brick.Break(); //PUT AT CORRECT POSITION
+                        brick.Break();
                     }
                 }
             }

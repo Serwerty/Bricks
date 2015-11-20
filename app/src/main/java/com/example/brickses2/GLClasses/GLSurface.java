@@ -4,6 +4,8 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import com.example.brickses2.UserInputHandler;
+
 public class GLSurface extends GLSurfaceView {
 
     public final GLRenderer mRenderer;
@@ -24,7 +26,7 @@ public class GLSurface extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        mRenderer.processTouchEvent(e);
+        UserInputHandler.processTouchEvent(e);
         return true;
     }
 

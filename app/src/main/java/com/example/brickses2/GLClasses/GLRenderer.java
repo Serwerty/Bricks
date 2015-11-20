@@ -25,12 +25,6 @@ public class GLRenderer implements Renderer {
 	private final float[] mtrxView = new float[16];
 	private final float[] mtrxProjectionAndView = new float[16];
 	
-	// Geometric variables
-	public static float vertices[];
-	public static short indices[];
-	public FloatBuffer vertexBuffer;
-	public ShortBuffer drawListBuffer;
-
 	public static int screenWidth = 1280;
 	public static int screenHeight = 720;
 
@@ -50,10 +44,15 @@ public class GLRenderer implements Renderer {
 	public void onDrawFrame(GL10 unused) {
 
 		// Update our example
+
+		World.GetInstance().MoveObjects();
 		World.GetInstance().DrawWorld();
 
 		// Render our example
 		Render(mtrxProjectionAndView);
+		//BufferManager.GetInstance().PlayerBufferCollection.ClearBuffer();
+		//BufferManager.GetInstance().BallBufferCollection.ClearBuffer();
+		//BufferManager.GetInstance().BricksBufferCollection.ClearBuffer();
 	}
 	
 	private void Render(float[] m) {
@@ -79,19 +78,29 @@ public class GLRenderer implements Renderer {
                 currentBM.BallBufferCollection.drawListBuffer,
                 currentBM.BallBufferCollection.indicesCount);
 
+		RenderGraphicsBuffer(mPositionHandle,
+				currentBM.BricksBufferCollection.vertexBuffer,
+				currentBM.BricksBufferCollection.drawListBuffer,
+				currentBM.BricksBufferCollection.indicesCount);
+
+		RenderGraphicsBuffer(mPositionHandle,
+				currentBM.PlayerBufferCollection.vertexBuffer,
+				currentBM.PlayerBufferCollection.drawListBuffer,
+				currentBM.PlayerBufferCollection.indicesCount);
+
 		// Disable vertex array
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
 	}
 
-	public void RenderGraphicsBuffer(int mPositionHandle, ByteBuffer verteces,
-									 ByteBuffer indeces, int indecesCount){
+	public void RenderGraphicsBuffer(int mPositionHandle, FloatBuffer verteces,
+									 ShortBuffer indeces, int indecesCount){
 		// Prepare the triangle coordinate data
 		GLES20.glVertexAttribPointer(mPositionHandle, 3,
 				GLES20.GL_FLOAT, false,
 				0, verteces);
 
 		GLES20.glDrawElements(GLES20.GL_TRIANGLES, indecesCount,
-                GLES20.GL_UNSIGNED_SHORT, indeces);
+				GLES20.GL_UNSIGNED_SHORT, indeces);
 	}
 
 	@Override
@@ -124,6 +133,9 @@ public class GLRenderer implements Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
+
+		World.GetInstance().DrawWorld();
+
 		// Set the clear color to black
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);	
 
@@ -139,45 +151,6 @@ public class GLRenderer implements Renderer {
 	    // Set our shader programm
 		GLES20.glUseProgram(ShaderTools.sp_SolidColor);
 
-        World.GetInstance().DrawWorld();
 	}
 
-	public void processTouchEvent(MotionEvent event) {
-        int screenhalf = screenWidth / 2;
-        // Get the half of screen value
-        if (event.getAction() == MotionEvent.ACTION_DOWN)
-        {
-            if(event.getX()<screenhalf) {
-                isLeftSide = true;
-                isRightSide = false;
-            }
-            else if (event.getX()>=screenhalf) {
-                isLeftSide = false;
-                isRightSide = true;
-            }
-        }
-        else if (event.getAction() == MotionEvent.ACTION_UP)
-        {
-            isRightSide=false;
-            isLeftSide=false;
-        }
-
-        // Update the new data.
-
-    }
-
-	private void MovePlayer()
-	{
-		if(isLeftSide && player.left>10)
-		{
-			player.left -= 5;
-			player.right -= 5;
-		}
-		else if (isRightSide  && player.right<=mScreenWidth-10)
-		{
-			player.left += 5;
-			player.right += 5;
-		}
-		TranslateSprite();
-	}
 }

@@ -1,11 +1,16 @@
 package com.example.brickses2.Managers;
 
+import android.support.annotation.NonNull;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public class BufferCollection{
 
@@ -17,7 +22,7 @@ public class BufferCollection{
     private List<Short> indicesList = new ArrayList<>();
     private short indexCount = 0;
 
-    public void Add(List<Float> vertices){
+    public void Add(List<Float> vertices) {
         verticesList.addAll(vertices);
 
         indicesList.add(indexCount);
@@ -30,7 +35,12 @@ public class BufferCollection{
         indexCount += 4;
     }
 
-    public void FillBuffer(){
+    public void ClearBuffer() {
+        verticesList = new ArrayList<>();
+        indicesList = new ArrayList<>();
+    }
+
+    public void FillBuffer() {
 
         float[] floatArray = new float[verticesList.size()];
         int i = 0;

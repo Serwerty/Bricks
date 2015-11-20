@@ -2,6 +2,7 @@ package com.example.brickses2.GameObjects;
 
 import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.Interfaces.IGraphicEntity;
+import com.example.brickses2.Managers.BufferManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +55,22 @@ public class World {
         graphicEntities.add(ball);
     }
 
-    public void DrawWorld(){
-        for (IGraphicEntity entity :  graphicEntities){
+    public void DrawWorld() {
+        for (IGraphicEntity entity :  graphicEntities) {
             entity.DrawGL();
         }
+        BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
+        BufferManager.GetInstance().BallBufferCollection.FillBuffer();
+        BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
+
+
+    }
+
+    public void MoveObjects(){
+        ((PlayerObject)graphicEntities.get(0)).Move();
+        ((BallObject)graphicEntities.get(1)).Move();
+        BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
+        BufferManager.GetInstance().BallBufferCollection.FillBuffer();
+        BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
     }
 }
