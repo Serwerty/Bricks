@@ -3,6 +3,7 @@ package com.example.brickses2.GameObjects;
 import android.graphics.Rect;
 
 import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Interfaces.IMovable;
 import com.example.brickses2.Managers.BufferManager;
@@ -15,13 +16,13 @@ import java.util.List;
 
 public class PlayerObject implements IGraphicEntity, IMovable {
 
-    private Rect rectangle;
+    public Rect rectangle;
 
     public  PlayerObject(){
 
-        int left = 720 / 2 - WorldConstants.PLAYER_WIDTH / 2;
+        int left = GLRenderer.screenHeight / 2 - WorldConstants.PLAYER_WIDTH / 2;
         int top = WorldConstants.PLAYER_HEIGHT;
-        int right = (720 + WorldConstants.PLAYER_WIDTH) / 2;
+        int right = (GLRenderer.screenHeight + WorldConstants.PLAYER_WIDTH) / 2;
         int bottom = 0;
 
         rectangle = new Rect(left, top, right, bottom);

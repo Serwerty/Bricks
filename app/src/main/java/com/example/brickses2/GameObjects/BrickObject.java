@@ -2,6 +2,7 @@ package com.example.brickses2.GameObjects;
 
 import android.graphics.Rect;
 import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Managers.BufferManager;
 
@@ -18,9 +19,10 @@ public class BrickObject implements IGraphicEntity {
     public  BrickObject(short i, short j){
 
         int left = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
-        int top = 1280 - j * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING); //TODO
+        int top = GLRenderer.screenWidth - j * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
         int right = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE;
-        int bottom = 1280 - (j * (WorldConstants.BRICK_SIZE +  WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE);
+        int bottom = GLRenderer.screenWidth -
+                (j * (WorldConstants.BRICK_SIZE +  WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE);
 
         rectangle = new Rect(left, top, right, bottom);
     }

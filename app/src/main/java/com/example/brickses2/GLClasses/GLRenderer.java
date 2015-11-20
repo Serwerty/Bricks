@@ -4,19 +4,16 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 
-import com.example.brickses2.GameObjects.Ball;
 import com.example.brickses2.GameObjects.World;
 
 public class GLRenderer implements Renderer {
@@ -31,34 +28,29 @@ public class GLRenderer implements Renderer {
 	public static short indices[];
 	public FloatBuffer vertexBuffer;
 	public ShortBuffer drawListBuffer;
-	private Ball ball;
-	// Our screenresolution
-	float	mScreenWidth = 1280;
-	float	mScreenHeight = 768;
+
+
+
+	public static int screenWidth = 1280;
+	public static int screenHeight = 720;
 
 	// Misc
 	Context mContext;
 	long mLastTime;
-	int mProgram;
 	boolean isLeftSide=false;
 	boolean isRightSide=false;
 
 
-	public Rect player;
-	
-	public GLRenderer(Context c)
-	{
+	public GLRenderer(Context c) {
 		mContext = c;
 		mLastTime = System.currentTimeMillis() + 100;
 	}
 	
-	public void onPause()
-	{
+	public void onPause() {
 		/* Do stuff to pause the renderer */
 	}
 	
-	public void onResume()
-	{
+	public void onResume()	{
 		/* Do stuff to resume the renderer */
 		mLastTime = System.currentTimeMillis();
 	}
@@ -70,15 +62,13 @@ public class GLRenderer implements Renderer {
     	long now = System.currentTimeMillis();
     	
     	// We should make sure we are valid and sane
-    	if (mLastTime > now) return;
+    	// if (mLastTime > now) return;
         
     	// Get the amount of time the last frame took.
-    	long elapsed = now - mLastTime;
+    	// long elapsed = now - mLastTime;
 		
 		// Update our example
 		World.GetInstance().DrawWorld();
-		MovePlayer();
-		ball.MoveBall(player.left);
 
 		// Render our example
 		Render(mtrxProjectionAndView);
@@ -177,35 +167,32 @@ public class GLRenderer implements Renderer {
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
 		
 		// We need to know the current width and height.
-		mScreenWidth = width;
-		mScreenHeight = height;
+		screenWidth = width;
+		screenHeight = height;
 		
 		// Redo the Viewport, making it fullscreen.
-		GLES20.glViewport(0, 0, (int) mScreenWidth, (int) mScreenHeight);
+		GLES20.glViewport(0, 0, screenWidth, screenHeight);
 		
 		// Clear our matrices
-	    for(int i=0;i<16;i++)
-	    {
+	    for(short i = 0; i < 16; i++)  {
 	    	mtrxProjection[i] = 0.0f;
 	    	mtrxView[i] = 0.0f;
 	    	mtrxProjectionAndView[i] = 0.0f;
 	    }
 	    
 	    // Setup our screen width and height for normal sprite translation.
-	    Matrix.orthoM(mtrxProjection, 0, 0f, mScreenWidth, 0.0f, mScreenHeight, 0, 50);
+	    Matrix.orthoM(mtrxProjection, 0, 0f, screenWidth, 0.0f, screenHeight, 0, 50);
 
 		// Set the camera position (View matrix)
         Matrix.setLookAtM(mtrxView, 0, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mtrxProjectionAndView, 0, mtrxProjection, 0, mtrxView, 0);
-
 	}
 
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
-		ball = new Ball();
 		// Create the triangle
 		SetupTriangle();
 		World.GetInstance().DrawWorld();
@@ -227,9 +214,8 @@ public class GLRenderer implements Renderer {
 		GLES20.glUseProgram(ShaderTools.sp_SolidColor);
 	}
 
-	public void processTouchEvent(MotionEvent event)
-	{
-		int screenhalf = (int) (mScreenWidth / 2);
+	public void processTouchEvent(MotionEvent event) {
+		int screenhalf = screenWidth / 2;
 		// Get the half of screen value
 		if (event.getAction() == MotionEvent.ACTION_DOWN)
 		{

@@ -3,6 +3,7 @@ package com.example.brickses2.GameObjects;
 import android.graphics.Rect;
 
 import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Interfaces.IMovable;
 import com.example.brickses2.Managers.BufferManager;
@@ -18,8 +19,8 @@ public class BallObject implements IGraphicEntity, IMovable {
 
     public  BallObject(){
         rectangle = new Rect();
-        rectangle.left = 720 / 2 - WorldConstants.BALL_SIZE;
-        rectangle.right = 720 / 2 + WorldConstants.BALL_SIZE;
+        rectangle.left = GLRenderer.screenHeight / 2 - WorldConstants.BALL_SIZE;
+        rectangle.right = GLRenderer.screenHeight / 2 + WorldConstants.BALL_SIZE;
         rectangle.bottom = WorldConstants.PLAYER_HEIGHT;
         rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.BALL_SIZE;
     }
@@ -49,6 +50,7 @@ public class BallObject implements IGraphicEntity, IMovable {
 
     @Override
     public void Move() {
+
         rectangle.offset(velocityX, velocityY);
 
         CheckCollision();
@@ -63,15 +65,15 @@ public class BallObject implements IGraphicEntity, IMovable {
             velocityX =- velocityX;
         }
 
-        if (rectangle.right >= 720) {
-            rectangle.left = 720 - WorldConstants.BALL_SIZE;
-            rectangle.right = 720;
+        if (rectangle.right >= GLRenderer.screenHeight) {
+            rectangle.left = GLRenderer.screenHeight - WorldConstants.BALL_SIZE;
+            rectangle.right = GLRenderer.screenHeight;
             velocityX =- velocityX;
         }
 
-        if (rectangle.top > 1280) {
-            rectangle.top = 1280;
-            rectangle.bottom = 1280 - WorldConstants.BALL_SIZE;
+        if (rectangle.top > GLRenderer.screenWidth) {
+            rectangle.top = GLRenderer.screenWidth;
+            rectangle.bottom = GLRenderer.screenWidth - WorldConstants.BALL_SIZE;
             velocityY =- velocityY;
         }
 
@@ -81,12 +83,14 @@ public class BallObject implements IGraphicEntity, IMovable {
             velocityY =- velocityY;
         }
 
-        if (rectangle.bottom < 80 && rectangle.right > X && rectangle.left < X + WorldConstants.PLAYER_WIDTH) {
-            ball.top=130;
-            ball.bottom=80;
-            if (speedY<0)
-                speedY=-speedY;
-            speedX=((X+150)-(ball.right+25))*-10/150;
+        PlayerObject player = (PlayerObject)World.GetInstance().graphicEntities.get(0); //Player always at first position
+        if (rectangle.bottom < 80 && rectangle.right > player.rectangle.
+                && rectangle.left < player.rectangle. + WorldConstants.PLAYER_WIDTH) {
+            rectangle.top = 130;
+            rectangle.bottom = 80;
+            if (velocityY < 0) velocityY = -velocityY;
+
+            velocityX = ((player.rectangle. + 150) - (rectangle.right + 25)) * -10 / 150;
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
@@ -94,6 +98,7 @@ public class BallObject implements IGraphicEntity, IMovable {
                 BrickObject brick = (BrickObject)entity;
                 if(brick.Exists()){
                     if(rectangle.intersect(brick.rectangle)){
+
                         Rect _prevPos = rectangle;
                         _prevPos.offset(-velocityX, -velocityY);
 
@@ -122,7 +127,7 @@ public class BallObject implements IGraphicEntity, IMovable {
                             if(velocityX > 0) velocityX =- velocityX;
                         }
 
-                        brick.Break();
+                        brick.Break(); //PUT AT CORRECT POSITION
                     }
                 }
             }
