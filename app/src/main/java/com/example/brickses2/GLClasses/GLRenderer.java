@@ -17,9 +17,11 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.view.MotionEvent;
 
+import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.GameObjects.World;
 import com.example.brickses2.Managers.BufferCollection;
 import com.example.brickses2.Managers.BufferManager;
+import com.example.brickses2.Managers.TextureManager;
 
 public class GLRenderer implements Renderer {
 
@@ -78,37 +80,47 @@ public class GLRenderer implements Renderer {
 
 		// Get handle to texture coordinates location and load the texture uvs
 		int mTexCoordLoc = GLES20.glGetAttribLocation(ShaderTools.sp_Image, "a_texCoord" );
-		GLES20.glVertexAttribPointer(mTexCoordLoc, 2, GLES20.GL_FLOAT, false, 0, uvBuffer);
+
 		GLES20.glEnableVertexAttribArray(mTexCoordLoc);
 
-		int mSamplerLoc = GLES20.glGetUniformLocation (ShaderTools.sp_Image, "s_texture" );
+		int mSamplerLoc = GLES20.glGetUniformLocation(ShaderTools.sp_Image, "s_texture");
 
 
 		// Set the sampler texture unit to 0, where we have saved the texture.
-		GLES20.glUniform1i ( mSamplerLoc, 0);
+		GLES20.glUniform1i(mSamplerLoc, 1);
 
         BufferManager currentBM = BufferManager.GetInstance();
-        RenderGraphicsBuffer(mPositionHandle,
+		RenderGraphicsBuffer(mPositionHandle, mTexCoordLoc,
 				currentBM.BallBufferCollection.vertexBuffer,
 				currentBM.BallBufferCollection.drawListBuffer,
+				currentBM.BallBufferCollection.uvBuffer,
 				currentBM.BallBufferCollection.indicesCount);
 
-		RenderGraphicsBuffer(mPositionHandle,
+		GLES20.glUniform1i(mSamplerLoc, 0);
+
+		RenderGraphicsBuffer(mPositionHandle, mTexCoordLoc,
 				currentBM.BricksBufferCollection.vertexBuffer,
 				currentBM.BricksBufferCollection.drawListBuffer,
+				currentBM.BricksBufferCollection.uvBuffer,
 				currentBM.BricksBufferCollection.indicesCount);
 
-		RenderGraphicsBuffer(mPositionHandle,
+		GLES20.glUniform1i(mSamplerLoc, 2);
+
+		RenderGraphicsBuffer(mPositionHandle, mTexCoordLoc,
 				currentBM.PlayerBufferCollection.vertexBuffer,
 				currentBM.PlayerBufferCollection.drawListBuffer,
+				currentBM.PlayerBufferCollection.uvBuffer,
 				currentBM.PlayerBufferCollection.indicesCount);
 
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
 		GLES20.glDisableVertexAttribArray(mTexCoordLoc);
 	}
 
-	public void RenderGraphicsBuffer(int mPositionHandle, FloatBuffer verteces,
-									 ShortBuffer indeces, int indecesCount){
+	public void RenderGraphicsBuffer(int mPositionHandle,int mTexCoordLoc, FloatBuffer verteces,
+									 ShortBuffer indeces, FloatBuffer uvBuffer1, int indecesCount){
+
+		GLES20.glVertexAttribPointer(mTexCoordLoc, 2, GLES20.GL_FLOAT, false, 0, uvBuffer1);
+
 		// Prepare the triangle coordinate data
 		GLES20.glVertexAttribPointer(mPositionHandle, 3,
 				GLES20.GL_FLOAT, false,
@@ -147,32 +159,30 @@ public class GLRenderer implements Renderer {
 
 	public void SetupImage()
 	{
-		// We will use a randomizer for randomizing the textures from texture atlas.
-		// This is strictly optional as it only effects the output of our app,
-		// Not the actual knowledge.
 
 
 		// 30 imageobjects times 4 vertices times (u and v)
-		uvs = new float[30*4*2];
+		int size = WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN *
+				WorldConstants.COUNT_OF_BRICKS_IN_A_ROW * 8;
+		uvs = new float[size];
 
 		// We will make 30 randomly textures objects
-		//for(int i=0; i<30; i++)
-		//{
-			int i=0;
+		for(int i=0; i < size / 8; i++)
+		{
 			int random_u_offset = 0;
 			int random_v_offset = 0;
 
-			uvs = new float[]{0,0,0,1,1,1,1,0};
-			/* Adding the UV's using the offsets
-			uvs[(i*8) + 0] = random_u_offset * 0.5f;
-			uvs[(i*8) + 1] = random_v_offset * 0.5f;
-			uvs[(i*8) + 2] = random_u_offset * 0.5f;
-			uvs[(i*8) + 3] = (random_v_offset+1) * 0.5f;
-			uvs[(i*8) + 4] = (random_u_offset+1) * 0.5f;
-			uvs[(i*8) + 5] = (random_v_offset+1) * 0.5f;
-			uvs[(i*8) + 6] = (random_u_offset+1) * 0.5f;
-			uvs[(i*8) + 7] = random_v_offset * 0.5f;*/
-		//}
+			//uvs = new float[]{0,0,0,1,1,1,1,0};
+			 //Adding the UV's using the offsets
+			uvs[(i*8) + 0] = 0;
+			uvs[(i*8) + 1] = 0;
+			uvs[(i*8) + 2] = 0;
+			uvs[(i*8) + 3] = 1;
+			uvs[(i*8) + 4] = 1;
+			uvs[(i*8) + 5] = 1;
+			uvs[(i*8) + 6] = 1;
+			uvs[(i*8) + 7] = 0;
+		}
 
 		// The texture buffer
 		ByteBuffer bb = ByteBuffer.allocateDirect(uvs.length * 4);
@@ -212,8 +222,10 @@ public class GLRenderer implements Renderer {
 
 
 		World.GetInstance().DrawWorld();
-		SetupImage();
-
+		//SetupImage();
+		TextureManager.BindTexture("drawable/brick", mContext);
+		TextureManager.BindTexture("drawable/file", mContext);
+		TextureManager.BindTexture("drawable/brick", mContext);
 		// Set the clear color to black
 		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);
 

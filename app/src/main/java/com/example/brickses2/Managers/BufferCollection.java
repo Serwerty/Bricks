@@ -16,10 +16,12 @@ public class BufferCollection{
 
     public FloatBuffer vertexBuffer;
     public ShortBuffer drawListBuffer;
+    public FloatBuffer uvBuffer;
     public int indicesCount;
 
     private List<Float> verticesList = new ArrayList<>();
     private List<Short> indicesList = new ArrayList<>();
+    private List<Short> textureCordList = new ArrayList<>();
     private short indexCount = 0;
 
     public void Add(List<Float> vertices) {
@@ -32,12 +34,26 @@ public class BufferCollection{
         indicesList.add((short) (indexCount + 2));
         indicesList.add((short) (indexCount + 3));
 
+        textureCordList.add((short)0);
+        textureCordList.add((short)0);
+
+        textureCordList.add((short)0);
+        textureCordList.add((short)1);
+
+        textureCordList.add((short)1);
+        textureCordList.add((short)1);
+
+        textureCordList.add((short)1);
+        textureCordList.add((short)0);
+
+
         indexCount += 4;
     }
 
     public void ClearBuffer() {
         verticesList.clear();
         indicesList.clear();
+        textureCordList.clear();
         indexCount = 0;
     }
 
@@ -55,6 +71,12 @@ public class BufferCollection{
             indicesArray[i++] = f;
         }
 
+        float[] texturesArray = new float[textureCordList.size()];
+        i = 0;
+        for (Short f : textureCordList) {
+            texturesArray[i++] = f;
+        }
+
         ByteBuffer bb = ByteBuffer.allocateDirect(floatArray.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
@@ -66,6 +88,13 @@ public class BufferCollection{
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(indicesArray);
         drawListBuffer.position(0);
+
+        // The texture buffer
+        ByteBuffer tb = ByteBuffer.allocateDirect(texturesArray.length * 4);
+        tb.order(ByteOrder.nativeOrder());
+        uvBuffer = tb.asFloatBuffer();
+        uvBuffer.put(texturesArray);
+        uvBuffer.position(0);
 
         indicesCount = indicesList.size();
 
