@@ -10,7 +10,7 @@ public final class WorldConstants {
     public final static short BRICK_SIZE = 50;
     public final static short PLAYER_WIDTH = 200;
     public final static short PLAYER_HEIGHT = 40;
-    public final static short BALL_SIZE = 30;
+    public final static short BALL_SIZE = 96;
     public final static short MAX_BALL_SPEED = 10;
     public final static short PLAYER_BOTTOM_PADDING = 100;
 
