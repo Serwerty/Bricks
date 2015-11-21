@@ -56,21 +56,19 @@ public class World {
     }
 
     public void DrawWorld() {
+        BufferManager.GetInstance().PlayerBufferCollection.ClearBuffer();
+        BufferManager.GetInstance().BallBufferCollection.ClearBuffer();
+        BufferManager.GetInstance().BricksBufferCollection.ClearBuffer();
         for (IGraphicEntity entity :  graphicEntities) {
             entity.DrawGL();
         }
         BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
         BufferManager.GetInstance().BallBufferCollection.FillBuffer();
         BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
-
-
     }
 
     public void MoveObjects(){
         ((PlayerObject)graphicEntities.get(0)).Move();
         ((BallObject)graphicEntities.get(1)).Move();
-        BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
-        BufferManager.GetInstance().BallBufferCollection.FillBuffer();
-        BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
     }
 }

@@ -44,15 +44,12 @@ public class GLRenderer implements Renderer {
 	public void onDrawFrame(GL10 unused) {
 
 		// Update our example
-
 		World.GetInstance().MoveObjects();
 		World.GetInstance().DrawWorld();
 
 		// Render our example
 		Render(mtrxProjectionAndView);
-		//BufferManager.GetInstance().PlayerBufferCollection.ClearBuffer();
-		//BufferManager.GetInstance().BallBufferCollection.ClearBuffer();
-		//BufferManager.GetInstance().BricksBufferCollection.ClearBuffer();
+
 	}
 	
 	private void Render(float[] m) {

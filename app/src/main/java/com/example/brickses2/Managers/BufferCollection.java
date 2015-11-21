@@ -36,8 +36,9 @@ public class BufferCollection{
     }
 
     public void ClearBuffer() {
-        verticesList = new ArrayList<>();
-        indicesList = new ArrayList<>();
+        verticesList.clear();
+        indicesList.clear();
+        indexCount = 0;
     }
 
     public void FillBuffer() {
@@ -67,5 +68,6 @@ public class BufferCollection{
         drawListBuffer.position(0);
 
         indicesCount = indicesList.size();
+
     }
 }

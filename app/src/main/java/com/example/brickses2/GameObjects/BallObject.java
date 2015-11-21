@@ -19,8 +19,8 @@ public class BallObject implements IGraphicEntity, IMovable {
 
     public  BallObject(){
         rectangle = new Rect();
-        rectangle.left = GLRenderer.screenHeight / 2 - WorldConstants.BALL_SIZE;
-        rectangle.right = GLRenderer.screenHeight / 2 + WorldConstants.BALL_SIZE;
+        rectangle.left = GLRenderer.screenHeight / 2 - WorldConstants.BALL_SIZE / 2;
+        rectangle.right = GLRenderer.screenHeight / 2 + WorldConstants.BALL_SIZE / 2;
         rectangle.bottom = WorldConstants.PLAYER_HEIGHT;
         rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.BALL_SIZE;
     }
@@ -58,7 +58,6 @@ public class BallObject implements IGraphicEntity, IMovable {
 
     private void CheckCollision(){
 
-        //TODO: Fix screen size
         if (rectangle.left <= 0) {
             rectangle.left = 0;
             rectangle.right = WorldConstants.BALL_SIZE;
@@ -84,10 +83,11 @@ public class BallObject implements IGraphicEntity, IMovable {
         }
 
         PlayerObject player = (PlayerObject)World.GetInstance().graphicEntities.get(0); //Player always at first position
-        if (rectangle.bottom < WorldConstants.PLAYER_HEIGHT && rectangle.right > player.rectangle.left
-                && rectangle.left < player.rectangle.left + WorldConstants.PLAYER_WIDTH) {
-            rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.BALL_SIZE;
-            rectangle.bottom = WorldConstants.PLAYER_HEIGHT;
+        if (rectangle.bottom < WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING
+                && (rectangle.right > player.rectangle.left
+                && rectangle.left < player.rectangle.left + WorldConstants.PLAYER_WIDTH)) {
+            rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING + WorldConstants.BALL_SIZE;
+            rectangle.bottom = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING;
             if (velocityY < 0) velocityY = -velocityY;
 
             velocityX = ((player.rectangle.left + WorldConstants.PLAYER_WIDTH / 2) -
@@ -99,32 +99,33 @@ public class BallObject implements IGraphicEntity, IMovable {
             if(entity instanceof BrickObject){
                 BrickObject brick = (BrickObject)entity;
                 if(brick.Exists()){
-                    if(rectangle.intersect(brick.rectangle)){
+
+                    if(checkIntersection(rectangle,brick.rectangle)) {
 
                         Rect _prevPos = rectangle;
                         _prevPos.offset(-velocityX, -velocityY);
 
                         if (_prevPos.top < brick.rectangle.bottom) {
                             //Top
-                            rectangle.bottom =  brick.rectangle.bottom - WorldConstants.BRICK_SIZE;
+                            rectangle.bottom =  brick.rectangle.bottom - WorldConstants.BALL_SIZE;
                             rectangle.top = brick.rectangle.bottom;
                             if(velocityY > 0) velocityY =- velocityY;
                         }
                         else if (_prevPos.bottom > brick.rectangle.top) {
                             //Bottom
                             rectangle.bottom = brick.rectangle.top;
-                            rectangle.top = brick.rectangle.top + WorldConstants.BRICK_SIZE;
+                            rectangle.top = brick.rectangle.top + WorldConstants.BALL_SIZE;
                             if(velocityY < 0) velocityY =- velocityY;
                         }
                         else if (_prevPos.left > brick.rectangle.right) {
                             //Left
                             rectangle.left = brick.rectangle.right;
-                            rectangle.right = brick.rectangle.right + WorldConstants.BRICK_SIZE;
+                            rectangle.right = brick.rectangle.right + WorldConstants.BALL_SIZE;
                             if(velocityX < 0) velocityX =- velocityX;
                         }
                         else if (_prevPos.right < brick.rectangle.left) {
                             //Right
-                            rectangle.left = brick.rectangle.left - WorldConstants.BRICK_SIZE;
+                            rectangle.left = brick.rectangle.left - WorldConstants.BALL_SIZE;
                             rectangle.right = brick.rectangle.left;
                             if(velocityX > 0) velocityX =- velocityX;
                         }
@@ -134,6 +135,15 @@ public class BallObject implements IGraphicEntity, IMovable {
                 }
             }
         }
+    }
 
+    private boolean checkIntersection(Rect a, Rect b) {
+        boolean collisionX = a.right >= b.left &&
+                b.right >= a.left;
+        // Collision y-axis?
+        boolean collisionY = a.top>= b.bottom &&
+                b.top >= a.bottom;
+        // Collision only if on both axes
+        return collisionX && collisionY;
     }
 }

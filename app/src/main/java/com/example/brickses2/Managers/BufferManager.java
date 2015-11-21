@@ -26,7 +26,4 @@ public class BufferManager {
     public BufferCollection PlayerBufferCollection;
     public BufferCollection BallBufferCollection;
 
-    public void Draw(){
-
-    }
 }

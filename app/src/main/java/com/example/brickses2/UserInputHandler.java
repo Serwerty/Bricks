@@ -14,7 +14,7 @@ import org.w3c.dom.UserDataHandler;
 public final class UserInputHandler {
 
     public static void processTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN)
+        if (event.getAction() == MotionEvent.ACTION_MOVE)
         {
             PlayerObject _player = (PlayerObject)World.GetInstance().graphicEntities.get(0);
             _player.SetPosition(event.getX());

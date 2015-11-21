@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
 		
 		// Fullscreen mode
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // We create our Surfaceview for our OpenGL here.
         glSurfaceView = new GLSurface(this);
         // Set our view.	
