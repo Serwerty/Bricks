@@ -159,8 +159,6 @@ public class GLRenderer implements Renderer {
 
 	public void SetupImage()
 	{
-
-
 		// 30 imageobjects times 4 vertices times (u and v)
 		int size = WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN *
 				WorldConstants.COUNT_OF_BRICKS_IN_A_ROW * 8;
@@ -227,7 +225,7 @@ public class GLRenderer implements Renderer {
 		TextureManager.BindTexture("drawable/file", mContext);
 		TextureManager.BindTexture("drawable/brick", mContext);
 		// Set the clear color to black
-		GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1);
+		GLES20.glClearColor(0.8f, 1f, 0.8f, 1);
 
 		GLES20.glEnable(GLES20.GL_BLEND);
 		GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);

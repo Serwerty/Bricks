@@ -90,9 +90,9 @@ public class BallObject implements IGraphicEntity, IMovable {
             rectangle.bottom = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING;
             if (velocityY < 0) velocityY = -velocityY;
 
-            velocityX = ((player.rectangle.left + WorldConstants.PLAYER_WIDTH / 2) -
+            velocityX = (int)(((player.rectangle.left + WorldConstants.PLAYER_WIDTH / 2) -
                     (rectangle.right + WorldConstants.BALL_SIZE  / 2)) *
-                    -WorldConstants.MAX_BALL_SPEED / (WorldConstants.PLAYER_WIDTH / 2);
+                    - ((float)WorldConstants.MAX_BALL_SPEED) / (WorldConstants.PLAYER_WIDTH / 2));
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
