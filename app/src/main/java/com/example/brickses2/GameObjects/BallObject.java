@@ -14,8 +14,8 @@ import java.util.List;
 public class BallObject implements IGraphicEntity, IMovable {
 
     private Rect rectangle;
-    private int velocityX = 5;
-    private int velocityY = 10;
+    private float velocityX = 5;
+    private float velocityY = 10;
 
     public  BallObject(){
         rectangle = new Rect();
@@ -51,7 +51,10 @@ public class BallObject implements IGraphicEntity, IMovable {
     @Override
     public void Move() {
 
-        rectangle.offset(velocityX, velocityY);
+        rectangle.left += velocityX;
+        rectangle.right += velocityX;
+        rectangle.bottom += velocityY;
+        rectangle.top += velocityY;
 
         CheckCollision();
     }
@@ -90,9 +93,9 @@ public class BallObject implements IGraphicEntity, IMovable {
             rectangle.bottom = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING;
             if (velocityY < 0) velocityY = -velocityY;
 
-            velocityX = (int)(((player.rectangle.left + WorldConstants.PLAYER_WIDTH / 2) -
+            velocityX = (((player.rectangle.left + (float)WorldConstants.PLAYER_WIDTH / 2) -
                     (rectangle.right + WorldConstants.BALL_SIZE  / 2)) *
-                    - ((float)WorldConstants.MAX_BALL_SPEED) / (WorldConstants.PLAYER_WIDTH / 2));
+                    - ((float)WorldConstants.MAX_BALL_SPEED) / ((float)WorldConstants.PLAYER_WIDTH / 2));
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
@@ -103,7 +106,10 @@ public class BallObject implements IGraphicEntity, IMovable {
                     if(checkIntersection(rectangle,brick.rectangle)) {
 
                         Rect _prevPos = rectangle;
-                        _prevPos.offset(-velocityX, -velocityY);
+                        _prevPos.left -= velocityX;
+                        _prevPos.right -= velocityX;
+                        _prevPos.bottom -= velocityY;
+                        _prevPos.top -= velocityY;
 
                         if (_prevPos.top < brick.rectangle.bottom) {
                             //Top

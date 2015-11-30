@@ -20,10 +20,12 @@ public class BufferManager {
         BricksBufferCollection = new BufferCollection();
         PlayerBufferCollection = new BufferCollection();
         BallBufferCollection = new BufferCollection();
+        BackGroundBufferCollection = new BufferCollection();
     }
 
     public BufferCollection BricksBufferCollection;
     public BufferCollection PlayerBufferCollection;
     public BufferCollection BallBufferCollection;
+    public BufferCollection BackGroundBufferCollection;
 
 }

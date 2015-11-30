@@ -1,6 +1,7 @@
 package com.example.brickses2;
 
 
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.app.Activity;
@@ -9,6 +10,8 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
 import com.example.brickses2.GLClasses.GLSurface;
+
+import java.nio.IntBuffer;
 
 public class MainActivity extends Activity {
 
@@ -27,8 +30,12 @@ public class MainActivity extends Activity {
 		// Fullscreen mode
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		IntBuffer i = IntBuffer.allocate(1);
+		GLES20.glGetIntegerv(GLES20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, i);
+
         // We create our Surfaceview for our OpenGL here.
         glSurfaceView = new GLSurface(this);
+
         // Set our view.	
 		setContentView(R.layout.activity_main);
 		

@@ -1,6 +1,9 @@
 package com.example.brickses2.GameObjects;
 
+import android.graphics.Rect;
+
 import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Managers.BufferManager;
 
@@ -34,6 +37,7 @@ public class World {
         InitializePlayer();
         InitializeBall();
         InitializeBricks();
+        InitializeBackGround();
     }
 
     private void InitializeBricks(){
@@ -55,16 +59,40 @@ public class World {
         graphicEntities.add(ball);
     }
 
+    private void InitializeBackGround(){
+        List<Float> vertices = new ArrayList<Float>();
+        vertices.add(0f);
+        vertices.add((float)GLRenderer.screenWidth);
+        vertices.add(0f);
+
+        vertices.add(0f);
+        vertices.add(0f);
+        vertices.add(0f);
+
+        vertices.add((float)GLRenderer.screenHeight);
+        vertices.add(0f);
+        vertices.add(0f);
+
+        vertices.add((float)GLRenderer.screenHeight);
+        vertices.add((float)GLRenderer.screenWidth);
+        vertices.add(0f);
+
+        BufferManager.GetInstance().BackGroundBufferCollection.Add(vertices);
+        BufferManager.GetInstance().BackGroundBufferCollection.FillBuffer();
+    }
+
     public void DrawWorld() {
         BufferManager.GetInstance().PlayerBufferCollection.ClearBuffer();
         BufferManager.GetInstance().BallBufferCollection.ClearBuffer();
         BufferManager.GetInstance().BricksBufferCollection.ClearBuffer();
+       // BufferManager.GetInstance().BackGroundBufferCollection.ClearBuffer();
         for (IGraphicEntity entity :  graphicEntities) {
             entity.DrawGL();
         }
         BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
         BufferManager.GetInstance().BallBufferCollection.FillBuffer();
         BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
+
     }
 
     public void MoveObjects(){

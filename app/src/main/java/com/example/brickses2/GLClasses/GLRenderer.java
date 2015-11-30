@@ -79,17 +79,24 @@ public class GLRenderer implements Renderer {
 		GLES20.glEnableVertexAttribArray(mPositionHandle);
 
 		// Get handle to texture coordinates location and load the texture uvs
-		int mTexCoordLoc = GLES20.glGetAttribLocation(ShaderTools.sp_Image, "a_texCoord" );
+		int mTexCoordLoc = GLES20.glGetAttribLocation(ShaderTools.sp_Image, "a_texCoord");
 
 		GLES20.glEnableVertexAttribArray(mTexCoordLoc);
 
 		int mSamplerLoc = GLES20.glGetUniformLocation(ShaderTools.sp_Image, "s_texture");
 
 
-		// Set the sampler texture unit to 0, where we have saved the texture.
-		GLES20.glUniform1i(mSamplerLoc, 1);
-
         BufferManager currentBM = BufferManager.GetInstance();
+
+		GLES20.glUniform1i(mSamplerLoc, 3);
+
+		RenderGraphicsBuffer(mPositionHandle, mTexCoordLoc,
+				currentBM.BackGroundBufferCollection.vertexBuffer,
+				currentBM.BackGroundBufferCollection.drawListBuffer,
+				currentBM.BackGroundBufferCollection.uvBuffer,
+				currentBM.BackGroundBufferCollection.indicesCount);
+
+		GLES20.glUniform1i(mSamplerLoc, 1);
 		RenderGraphicsBuffer(mPositionHandle, mTexCoordLoc,
 				currentBM.BallBufferCollection.vertexBuffer,
 				currentBM.BallBufferCollection.drawListBuffer,
@@ -111,6 +118,9 @@ public class GLRenderer implements Renderer {
 				currentBM.PlayerBufferCollection.drawListBuffer,
 				currentBM.PlayerBufferCollection.uvBuffer,
 				currentBM.PlayerBufferCollection.indicesCount);
+
+
+
 
 		GLES20.glDisableVertexAttribArray(mPositionHandle);
 		GLES20.glDisableVertexAttribArray(mTexCoordLoc);
@@ -157,64 +167,6 @@ public class GLRenderer implements Renderer {
         Matrix.multiplyMM(mtrxProjectionAndView, 0, mtrxProjection, 0, mtrxView, 0);
 	}
 
-	public void SetupImage()
-	{
-		// 30 imageobjects times 4 vertices times (u and v)
-		int size = WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN *
-				WorldConstants.COUNT_OF_BRICKS_IN_A_ROW * 8;
-		uvs = new float[size];
-
-		// We will make 30 randomly textures objects
-		for(int i=0; i < size / 8; i++)
-		{
-			int random_u_offset = 0;
-			int random_v_offset = 0;
-
-			//uvs = new float[]{0,0,0,1,1,1,1,0};
-			 //Adding the UV's using the offsets
-			uvs[(i*8) + 0] = 0;
-			uvs[(i*8) + 1] = 0;
-			uvs[(i*8) + 2] = 0;
-			uvs[(i*8) + 3] = 1;
-			uvs[(i*8) + 4] = 1;
-			uvs[(i*8) + 5] = 1;
-			uvs[(i*8) + 6] = 1;
-			uvs[(i*8) + 7] = 0;
-		}
-
-		// The texture buffer
-		ByteBuffer bb = ByteBuffer.allocateDirect(uvs.length * 4);
-		bb.order(ByteOrder.nativeOrder());
-		uvBuffer = bb.asFloatBuffer();
-		uvBuffer.put(uvs);
-		uvBuffer.position(0);
-
-		// Generate Textures, if more needed, alter these numbers.
-		int[] texturenames = new int[1];
-		GLES20.glGenTextures(1, texturenames, 0);
-
-		// Retrieve our image from resources.
-		int id = mContext.getResources().getIdentifier("drawable/file", null, mContext.getPackageName());
-
-		// Temporary create a bitmap
-		Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), id);
-
-		// Bind texture to texturename
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texturenames[0]);
-
-		// Set filtering
-		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-		// Load the bitmap into the bound texture.
-		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bmp, 0);
-
-		// We are done using the bitmap so we should recycle it.
-		bmp.recycle();
-
-	}
-
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
 
@@ -224,6 +176,7 @@ public class GLRenderer implements Renderer {
 		TextureManager.BindTexture("drawable/brick", mContext);
 		TextureManager.BindTexture("drawable/file", mContext);
 		TextureManager.BindTexture("drawable/brick", mContext);
+		TextureManager.BindTexture("drawable/background", mContext);
 		// Set the clear color to black
 		GLES20.glClearColor(0.8f, 1f, 0.8f, 1);
 
