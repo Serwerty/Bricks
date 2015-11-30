@@ -96,6 +96,10 @@ public class BallObject implements IGraphicEntity, IMovable {
             velocityX = (((player.rectangle.left + (float)WorldConstants.PLAYER_WIDTH / 2) -
                     (rectangle.right + WorldConstants.BALL_SIZE  / 2)) *
                     - ((float)WorldConstants.MAX_BALL_SPEED) / ((float)WorldConstants.PLAYER_WIDTH / 2));
+
+            float _lenght = (float)Math.sqrt(velocityX*velocityX + velocityY*velocityY);
+            velocityX = velocityX/_lenght * WorldConstants.MAX_BALL_SPEED;
+            velocityY = velocityY/_lenght * WorldConstants.MAX_BALL_SPEED;
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
