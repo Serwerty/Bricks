@@ -175,7 +175,7 @@ public class GLRenderer implements Renderer {
 		//SetupImage();
 		TextureManager.BindTexture("drawable/brick", mContext);
 		TextureManager.BindTexture("drawable/file", mContext);
-		TextureManager.BindTexture("drawable/brick", mContext);
+		TextureManager.BindTexture("drawable/player", mContext);
 		TextureManager.BindTexture("drawable/background", mContext);
 		// Set the clear color to black
 		GLES20.glClearColor(0.8f, 1f, 0.8f, 1);

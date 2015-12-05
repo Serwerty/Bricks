@@ -16,7 +16,7 @@ public class BallObject implements IGraphicEntity, IMovable {
     private Rect rectangle;
     private float velocityX = 5;
     private float velocityY = 10;
-
+    private float power = 0;
     public  BallObject(){
         rectangle = new Rect();
         rectangle.left = GLRenderer.screenHeight / 2 - WorldConstants.BALL_SIZE / 2;
@@ -98,8 +98,8 @@ public class BallObject implements IGraphicEntity, IMovable {
                     - ((float)WorldConstants.MAX_BALL_SPEED) / ((float)WorldConstants.PLAYER_WIDTH / 2));
 
             float _lenght = (float)Math.sqrt(velocityX*velocityX + velocityY*velocityY);
-            velocityX = velocityX/_lenght * WorldConstants.MAX_BALL_SPEED;
-            velocityY = velocityY/_lenght * WorldConstants.MAX_BALL_SPEED;
+            velocityX = velocityX/_lenght * WorldConstants.MAX_BALL_SPEED + power;
+            velocityY = velocityY/_lenght * WorldConstants.MAX_BALL_SPEED + power;
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
@@ -141,6 +141,7 @@ public class BallObject implements IGraphicEntity, IMovable {
                         }
 
                         brick.Break();
+                        power += WorldConstants.BALL_SPEED_INC;
                     }
                 }
             }
