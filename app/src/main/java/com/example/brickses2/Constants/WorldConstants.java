@@ -13,7 +13,7 @@ public interface WorldConstants {
     short BALL_SIZE = 36;
     short MAX_BALL_SPEED = 15;
     short PLAYER_BOTTOM_PADDING = 100;
-    float BALL_SPEED_INC = 0.1f;
+    float BALL_SPEED_INC = 0.01f;
 }
 
 

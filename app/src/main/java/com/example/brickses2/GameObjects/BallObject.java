@@ -1,6 +1,9 @@
 package com.example.brickses2.GameObjects;
 
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.drawable.VectorDrawable;
 
 import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.GLClasses.GLRenderer;
@@ -10,6 +13,7 @@ import com.example.brickses2.Managers.BufferManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class BallObject implements IGraphicEntity, IMovable {
 
@@ -146,6 +150,25 @@ public class BallObject implements IGraphicEntity, IMovable {
                 }
             }
         }
+    }
+
+    private float clamp(float value, float max, float min)
+    {
+        return Math.max(min,Math.min(max,value));
+    }
+
+    private boolean checkIntersection1(Rect a,Rect b)
+    {
+        PointF _ball  = new PointF(a.centerX(),a.centerY());
+        PointF _brick  = new PointF(b.centerX(),b.centerY());
+        PointF _difference = new PointF(Math.abs(_ball.x - _brick.x), Math.abs(_ball.y - _brick.y));
+        PointF _halfBrick = new PointF((float)WorldConstants.BRICK_SIZE, (float)WorldConstants.BRICK_SIZE);
+        PointF _clamped = new PointF(clamp(_difference.x, -_halfBrick.x, _halfBrick.x),
+                clamp(_difference.y, -_halfBrick.y, _halfBrick.y));
+        PointF _closest = new PointF(_brick.x + _clamped.x, _brick.y + _clamped.y );
+        _difference = new PointF(Math.abs(_closest.x - _ball.x), Math.abs(_closest.y - _ball.y));
+        return _difference.length() < WorldConstants.BALL_SIZE;
+
     }
 
     private boolean checkIntersection(Rect a, Rect b) {
