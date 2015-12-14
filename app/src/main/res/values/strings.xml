@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BricksES2</string>
+    <string name="title_activity_menu">MenuActivity</string>
 </resources>

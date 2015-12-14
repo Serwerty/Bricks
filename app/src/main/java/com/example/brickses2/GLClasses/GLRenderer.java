@@ -21,6 +21,7 @@ import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.GameObjects.World;
 import com.example.brickses2.Managers.BufferCollection;
 import com.example.brickses2.Managers.BufferManager;
+import com.example.brickses2.Managers.TextManager;
 import com.example.brickses2.Managers.TextureManager;
 
 public class GLRenderer implements Renderer {
@@ -59,10 +60,14 @@ public class GLRenderer implements Renderer {
 		// Render our example
 		Render(mtrxProjectionAndView);
 
+		if(tm!=null)
+			tm.Draw(mtrxProjectionAndView);
+
 	}
 	
 	private void Render(float[] m) {
-		
+
+		GLES20.glUseProgram(ShaderTools.sp_Image);
 		// clear Screen and Depth Buffer, we have set the clear color as black.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         
@@ -73,7 +78,7 @@ public class GLRenderer implements Renderer {
         int mtrxhandle = GLES20.glGetUniformLocation(ShaderTools.sp_Image, "uMVPMatrix");
 
         // Apply the projection and view transforzmation
-        GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
+		GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0);
 
 		// Enable generic vertex attribute array
 		GLES20.glEnableVertexAttribArray(mPositionHandle);
@@ -86,7 +91,9 @@ public class GLRenderer implements Renderer {
 		int mSamplerLoc = GLES20.glGetUniformLocation(ShaderTools.sp_Image, "s_texture");
 
 
+
         BufferManager currentBM = BufferManager.GetInstance();
+
 
 		GLES20.glUniform1i(mSamplerLoc, 3);
 
@@ -172,11 +179,13 @@ public class GLRenderer implements Renderer {
 
 
 		World.GetInstance().DrawWorld();
+		SetupText();
 		//SetupImage();
 		TextureManager.BindTexture("drawable/brick", mContext);
 		TextureManager.BindTexture("drawable/file", mContext);
 		TextureManager.BindTexture("drawable/player", mContext);
 		TextureManager.BindTexture("drawable/background", mContext);
+		TextureManager.BindTexture("drawable/font",mContext);
 		// Set the clear color to black
 		GLES20.glClearColor(0.8f, 1f, 0.8f, 1);
 
@@ -191,7 +200,18 @@ public class GLRenderer implements Renderer {
 		GLES20.glAttachShader(ShaderTools.sp_Image, vertexShader);   // add the vertex shader to program
 		GLES20.glAttachShader(ShaderTools.sp_Image, fragmentShader); // add the fragment shader to program
 		GLES20.glLinkProgram(ShaderTools.sp_Image);                  // creates OpenGL ES program executables
-		GLES20.glUseProgram(ShaderTools.sp_Image);
+
+
+		int vshadert = ShaderTools.loadShader(GLES20.GL_VERTEX_SHADER,
+				ShaderTools.vs_Text);
+		int fshadert = ShaderTools.loadShader(GLES20.GL_FRAGMENT_SHADER,
+				ShaderTools.fs_Text);
+
+		ShaderTools.sp_Text = GLES20.glCreateProgram();
+		GLES20.glAttachShader(ShaderTools.sp_Text, vshadert);
+		GLES20.glAttachShader(ShaderTools.sp_Text, fshadert);
+		GLES20.glLinkProgram(ShaderTools.sp_Text);
+		GLES20.glUseProgram(ShaderTools.sp_Text);
 
 	   /* Create the shaders
 	    vertexShader = ShaderTools.loadShader(GLES20.GL_VERTEX_SHADER, ShaderTools.vs_SolidColor);
@@ -207,4 +227,26 @@ public class GLRenderer implements Renderer {
 
 	}
 
+	TextManager tm;
+
+	public void SetupText()
+	{
+		// Create our text manager
+		tm = new TextManager();
+
+		// Tell our text manager to use index 1 of textures loaded
+		tm.setTextureID(4);
+
+		// Pass the uniform scale
+		tm.setUniformscale(1f);
+
+		// Create our new textobject
+		TextObject txt = new TextObject("hello world", 10f, 10f);
+
+		// Add it to our manager
+		tm.addText(txt);
+
+		// Prepare the text for rendering
+		tm.PrepareDraw();
+	}
 }

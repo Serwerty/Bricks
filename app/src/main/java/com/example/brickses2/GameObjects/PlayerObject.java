@@ -19,6 +19,7 @@ public class PlayerObject implements IGraphicEntity, IMovable {
     public Rect rectangle;
     private int LeftPosition;
 
+
     public  PlayerObject() {
 
         int left = GLRenderer.screenHeight / 2 - WorldConstants.PLAYER_WIDTH / 2;
