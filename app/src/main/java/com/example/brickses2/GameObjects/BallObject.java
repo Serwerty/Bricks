@@ -10,6 +10,7 @@ import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Interfaces.IMovable;
 import com.example.brickses2.Managers.BufferManager;
+import com.example.brickses2.Managers.MediaManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,28 +70,35 @@ public class BallObject implements IGraphicEntity, IMovable {
             rectangle.left = 0;
             rectangle.right = WorldConstants.BALL_SIZE;
             velocityX =- velocityX;
+            MediaManager.Play("Hit");
         }
 
         if (rectangle.right >= GLRenderer.screenWidth) {
             rectangle.left = GLRenderer.screenWidth - WorldConstants.BALL_SIZE;
             rectangle.right = GLRenderer.screenWidth;
             velocityX =- velocityX;
+            MediaManager.Play("Hit");
         }
 
         if (rectangle.top > GLRenderer.screenHeight) {
             rectangle.top = GLRenderer.screenHeight;
             rectangle.bottom = GLRenderer.screenHeight - WorldConstants.BALL_SIZE;
             velocityY =- velocityY;
+            MediaManager.Play("Hit");
         }
 
         if (rectangle.bottom < 0) {
             rectangle.top = WorldConstants.BALL_SIZE;
             rectangle.bottom = 0;
             velocityY =- velocityY;
+            MediaManager.Play("Hit");
+            World.GetInstance().GameOver();
         }
 
         PlayerObject player = (PlayerObject)World.GetInstance().graphicEntities.get(0); //Player always at first position
-        if (rectangle.bottom < WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING
+
+        if ((rectangle.bottom < WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING &&
+                rectangle.top > WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING)
                 && (rectangle.right > player.rectangle.left
                 && rectangle.left < player.rectangle.left + WorldConstants.PLAYER_WIDTH)) {
             rectangle.top = WorldConstants.PLAYER_HEIGHT + WorldConstants.PLAYER_BOTTOM_PADDING + WorldConstants.BALL_SIZE;
@@ -104,6 +112,7 @@ public class BallObject implements IGraphicEntity, IMovable {
             float _lenght = (float)Math.sqrt(velocityX*velocityX + velocityY*velocityY);
             velocityX = velocityX/_lenght * WorldConstants.MAX_BALL_SPEED + power;
             velocityY = velocityY/_lenght * WorldConstants.MAX_BALL_SPEED + power;
+            MediaManager.Play("Hit");
         }
 
         for(IGraphicEntity entity : World.GetInstance().graphicEntities){
@@ -146,6 +155,8 @@ public class BallObject implements IGraphicEntity, IMovable {
 
                         brick.Break();
                         power += WorldConstants.BALL_SPEED_INC;
+                        MediaManager.Play("Hit");
+                        World.GetInstance().currentPlayerStats.IncrementScore();
                     }
                 }
             }

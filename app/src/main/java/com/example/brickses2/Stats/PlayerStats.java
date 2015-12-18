@@ -5,9 +5,17 @@ package com.example.brickses2.Stats;
  */
 public class PlayerStats {
     public String name;
-    public int score;
-    public int highscore;
+    public int score = 0;
+    public int highscore = 0;
 
+    public PlayerStats() {
+    }
 
+    public String GetScore() {
+        return Integer.toString(score);
+    }
 
+    public void IncrementScore() {
+        score++;
+    }
 }

@@ -4,7 +4,7 @@ package com.example.brickses2.Constants;
  * Created by Олег on 07.11.2015.
  */
 public interface WorldConstants {
-    short COUNT_OF_BRICKS_IN_A_ROW = 13;
+    short COUNT_OF_BRICKS_IN_A_ROW = 15;
     short COUNT_OF_BRICKS_IN_A_COLUMN = 5;
     short BRICK_PADDING = 5;
     short BRICK_SIZE = 50;
@@ -14,6 +14,8 @@ public interface WorldConstants {
     short MAX_BALL_SPEED = 10;
     short PLAYER_BOTTOM_PADDING = 100;
     float BALL_SPEED_INC = 0.05f;
+    float TEXT_BOTTOM_MARGIN = 10f;
+    float TEXT_LEFT_MARGIN = 10f;
 }
 
 

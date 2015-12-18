@@ -1,11 +1,11 @@
 package com.example.brickses2.GameObjects;
 
-import android.graphics.Rect;
-
 import com.example.brickses2.Constants.WorldConstants;
 import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
 import com.example.brickses2.Managers.BufferManager;
+import com.example.brickses2.Managers.TextManager;
+import com.example.brickses2.Stats.PlayerStats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,14 @@ public class World {
 
     private int bricksRowsCount;
     private int bricksColumnCount;
+    private TextObject scoreTextObject;
+
 
     public List<IGraphicEntity> graphicEntities;
+    public PlayerStats currentPlayerStats;
+    public TextManager textManager;
+
+
 
     private World() {
 
@@ -33,11 +39,14 @@ public class World {
         bricksColumnCount = WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN;
 
         graphicEntities = new ArrayList<>();
+        currentPlayerStats = new PlayerStats();
+
 
         InitializePlayer();
         InitializeBall();
         InitializeBricks();
         InitializeBackGround();
+        InitializeTextManager();
     }
 
     private void InitializeBricks(){
@@ -59,6 +68,22 @@ public class World {
         graphicEntities.add(ball);
     }
 
+    private void InitializeTextManager() {
+        textManager = new TextManager();
+        // Tell our text manager to use index 1 of textures loaded
+        textManager.setTextureID(4);
+
+        // Pass the uniform scale
+        textManager.setUniformscale(1f);
+
+        scoreTextObject = new TextObject("score: " + currentPlayerStats.GetScore(),WorldConstants.TEXT_LEFT_MARGIN, WorldConstants.TEXT_BOTTOM_MARGIN);
+        // Add it to our manager
+        textManager.addText(scoreTextObject);
+
+        // Prepare the text for rendering
+        textManager.PrepareDraw();
+    }
+
     private void InitializeBackGround(){
         List<Float> vertices = new ArrayList<Float>();
         vertices.add(0f);
@@ -73,8 +98,8 @@ public class World {
         vertices.add(0f);
         vertices.add(0f);
 
-        vertices.add((float)GLRenderer.screenHeight);
-        vertices.add((float)GLRenderer.screenWidth);
+        vertices.add((float) GLRenderer.screenHeight);
+        vertices.add((float) GLRenderer.screenWidth);
         vertices.add(0f);
 
         BufferManager.GetInstance().BackGroundBufferCollection.Add(vertices);
@@ -92,11 +117,18 @@ public class World {
         BufferManager.GetInstance().PlayerBufferCollection.FillBuffer();
         BufferManager.GetInstance().BallBufferCollection.FillBuffer();
         BufferManager.GetInstance().BricksBufferCollection.FillBuffer();
-
+        textManager.txtcollection.get(textManager.txtcollection.indexOf(scoreTextObject)).text = "score: " + currentPlayerStats.GetScore();
+        textManager.PrepareDraw();
     }
 
     public void MoveObjects(){
         ((PlayerObject)graphicEntities.get(0)).Move();
         ((BallObject)graphicEntities.get(1)).Move();
     }
+
+    public void GameOver(){
+        //TODO implement Gameover
+    }
+
+
 }

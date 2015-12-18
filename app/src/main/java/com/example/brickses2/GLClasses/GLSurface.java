@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 
+import com.example.brickses2.Managers.TextureManager;
 import com.example.brickses2.UserInputHandler;
 
 public class GLSurface extends GLSurfaceView {
@@ -42,5 +43,6 @@ public class GLSurface extends GLSurfaceView {
         // TODO Auto-generated method stub
         super.onResume();
         mRenderer.onResume();
+        TextureManager.Reset();
     }
 }

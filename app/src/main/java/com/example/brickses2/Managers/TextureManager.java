@@ -42,4 +42,8 @@ public final class TextureManager {
         bmp.recycle();
         textureIndex++;
     }
+
+    public static void Reset() {
+        textureIndex = 0;
+    }
 }

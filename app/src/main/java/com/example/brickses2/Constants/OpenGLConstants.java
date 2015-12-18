@@ -5,4 +5,5 @@ package com.example.brickses2.Constants;
  */
 public interface OpenGLConstants {
     short TEXTURES_COUNT = 5;
+    short SOUNDS_COUNT=1;
 }

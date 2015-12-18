@@ -1,4 +1,4 @@
-package com.example.brickses2.GLClasses;
+package com.example.brickses2.GameObjects;
 
 /**
  * Created by Олег on 14.12.2015.

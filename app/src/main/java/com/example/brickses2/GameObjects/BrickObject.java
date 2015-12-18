@@ -19,9 +19,9 @@ public class BrickObject implements IGraphicEntity {
     public  BrickObject(short i, short j){
 
         int left = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
-        int top = GLRenderer.screenWidth - j * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
+        int top = GLRenderer.screenHeight - j * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING);
         int right = i * (WorldConstants.BRICK_SIZE + WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE;
-        int bottom = GLRenderer.screenWidth -
+        int bottom = GLRenderer.screenHeight -
                 (j * (WorldConstants.BRICK_SIZE +  WorldConstants.BRICK_PADDING) + WorldConstants.BRICK_SIZE);
 
         rectangle = new Rect(left, top, right, bottom);

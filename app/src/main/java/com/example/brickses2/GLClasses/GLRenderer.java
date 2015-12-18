@@ -1,7 +1,5 @@
 package com.example.brickses2.GLClasses;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
@@ -9,20 +7,18 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.view.MotionEvent;
 
-import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.GameObjects.TextObject;
 import com.example.brickses2.GameObjects.World;
-import com.example.brickses2.Managers.BufferCollection;
 import com.example.brickses2.Managers.BufferManager;
+import com.example.brickses2.Managers.MediaManager;
 import com.example.brickses2.Managers.TextManager;
 import com.example.brickses2.Managers.TextureManager;
+import com.example.brickses2.R;
 
 public class GLRenderer implements Renderer {
 
@@ -32,9 +28,7 @@ public class GLRenderer implements Renderer {
 	private final float[] mtrxProjectionAndView = new float[16];
 	
 	public static int screenWidth = 1280;
-	public static int screenHeight = 720;
-	public static float uvs[];
-	public FloatBuffer uvBuffer;
+	public static int screenHeight = 800;
 	Context mContext;
 
 
@@ -60,8 +54,8 @@ public class GLRenderer implements Renderer {
 		// Render our example
 		Render(mtrxProjectionAndView);
 
-		if(tm!=null)
-			tm.Draw(mtrxProjectionAndView);
+		if(World.GetInstance().textManager!=null)
+			World.GetInstance().textManager.Draw(mtrxProjectionAndView);
 
 	}
 	
@@ -179,13 +173,14 @@ public class GLRenderer implements Renderer {
 
 
 		World.GetInstance().DrawWorld();
-		SetupText();
-		//SetupImage();
+
 		TextureManager.BindTexture("drawable/brick", mContext);
 		TextureManager.BindTexture("drawable/file", mContext);
 		TextureManager.BindTexture("drawable/player", mContext);
 		TextureManager.BindTexture("drawable/background", mContext);
 		TextureManager.BindTexture("drawable/font",mContext);
+
+		MediaManager.addSound("Hit", R.raw.hitmarker, mContext);
 		// Set the clear color to black
 		GLES20.glClearColor(0.8f, 1f, 0.8f, 1);
 
@@ -227,26 +222,6 @@ public class GLRenderer implements Renderer {
 
 	}
 
-	TextManager tm;
 
-	public void SetupText()
-	{
-		// Create our text manager
-		tm = new TextManager();
 
-		// Tell our text manager to use index 1 of textures loaded
-		tm.setTextureID(4);
-
-		// Pass the uniform scale
-		tm.setUniformscale(1f);
-
-		// Create our new textobject
-		TextObject txt = new TextObject("hello world", 10f, 10f);
-
-		// Add it to our manager
-		tm.addText(txt);
-
-		// Prepare the text for rendering
-		tm.PrepareDraw();
-	}
 }

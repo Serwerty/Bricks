@@ -3,7 +3,7 @@ package com.example.brickses2.Managers;
 import android.opengl.GLES20;
 
 import com.example.brickses2.GLClasses.ShaderTools;
-import com.example.brickses2.GLClasses.TextObject;
+import com.example.brickses2.GameObjects.TextObject;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
