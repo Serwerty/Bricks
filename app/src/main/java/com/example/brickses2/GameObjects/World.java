@@ -1,10 +1,18 @@
 package com.example.brickses2.GameObjects;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuInflater;
+
 import com.example.brickses2.Constants.WorldConstants;
+import com.example.brickses2.DB.Player;
 import com.example.brickses2.GLClasses.GLRenderer;
 import com.example.brickses2.Interfaces.IGraphicEntity;
+import com.example.brickses2.MainActivity;
 import com.example.brickses2.Managers.BufferManager;
 import com.example.brickses2.Managers.TextManager;
+import com.example.brickses2.MenuActivity;
 import com.example.brickses2.Stats.PlayerStats;
 
 import java.util.ArrayList;
@@ -25,7 +33,7 @@ public class World {
     private int bricksRowsCount;
     private int bricksColumnCount;
     private TextObject scoreTextObject;
-
+    private Context context;
 
     public List<IGraphicEntity> graphicEntities;
     public PlayerStats currentPlayerStats;
@@ -34,6 +42,10 @@ public class World {
 
 
     private World() {
+        InitializeWorld();
+    }
+
+    private void InitializeWorld(){
 
         bricksRowsCount = WorldConstants.COUNT_OF_BRICKS_IN_A_ROW;
         bricksColumnCount = WorldConstants.COUNT_OF_BRICKS_IN_A_COLUMN;
@@ -126,8 +138,20 @@ public class World {
         ((BallObject)graphicEntities.get(1)).Move();
     }
 
+    public void SetContext(Context mContext)
+    {
+        this.context = mContext;
+    }
+
     public void GameOver(){
-        //TODO implement Gameover
+        int _currentHighscore = Integer.parseInt(MenuActivity.currentPlayer.getHighScore());
+        if (_currentHighscore < currentPlayerStats.score) {
+            MenuActivity.currentPlayer.setHighScore(currentPlayerStats.score);
+            MenuActivity.updatePlayer();
+        }
+        Intent myIntent = new Intent(context, MenuActivity.class);
+        context.startActivity(myIntent);
+        InitializeWorld();
     }
 
 

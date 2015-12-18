@@ -6,7 +6,6 @@ package com.example.brickses2.Stats;
 public class PlayerStats {
     public String name;
     public int score = 0;
-    public int highscore = 0;
 
     public PlayerStats() {
     }

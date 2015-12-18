@@ -7,6 +7,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
@@ -14,10 +15,12 @@ import android.opengl.Matrix;
 
 import com.example.brickses2.GameObjects.TextObject;
 import com.example.brickses2.GameObjects.World;
+import com.example.brickses2.MainActivity;
 import com.example.brickses2.Managers.BufferManager;
 import com.example.brickses2.Managers.MediaManager;
 import com.example.brickses2.Managers.TextManager;
 import com.example.brickses2.Managers.TextureManager;
+import com.example.brickses2.MenuActivity;
 import com.example.brickses2.R;
 
 public class GLRenderer implements Renderer {
@@ -28,7 +31,7 @@ public class GLRenderer implements Renderer {
 	private final float[] mtrxProjectionAndView = new float[16];
 	
 	public static int screenWidth = 1280;
-	public static int screenHeight = 800;
+	public static int screenHeight = 960;
 	Context mContext;
 
 
@@ -173,6 +176,7 @@ public class GLRenderer implements Renderer {
 
 
 		World.GetInstance().DrawWorld();
+		World.GetInstance().SetContext(mContext);
 
 		TextureManager.BindTexture("drawable/brick", mContext);
 		TextureManager.BindTexture("drawable/file", mContext);
